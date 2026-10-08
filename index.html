@@ -1,0 +1,1189 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Desks Galore — new and used office furniture, coordinated office collections, delivery and setup in Texas."
+    />
+    <title>Desks Galore | San Antonio Office & Home Furniture</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Libre+Franklin:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <div class="announcement-bar">
+      <div class="shell announcement-inner">
+        <span
+          ><strong>San Antonio showroom:</strong> 8111 Meadow Leaf, San Antonio,
+          TX 78227</span
+        >
+        <span class="announcement-separator">•</span>
+        <span>Mon–Sat 9–6 · Sun 12–5</span>
+        <a href="tel:+12102230004">(210) 223-0004</a>
+      </div>
+    </div>
+
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a
+          class="brand"
+          href="#home"
+          data-route-link="home"
+          aria-label="Desks Galore home"
+        >
+          <span class="brand-wordmark">DESKS GALORE</span>
+          <span class="brand-sub">SAN ANTONIO · NEW + USED FURNITURE</span>
+        </a>
+
+        <button
+          class="mobile-nav-button"
+          id="mobileNavButton"
+          aria-expanded="false"
+          aria-controls="mainNav"
+        >
+          <span></span><span></span><span></span>
+          <span class="sr-only">Toggle navigation</span>
+        </button>
+
+        <nav class="main-nav" id="mainNav" aria-label="Primary navigation">
+          <a href="#home" data-route-link="home">Home</a>
+          <a href="#collections" data-route-link="collections"
+            >Office Collections</a
+          >
+          <a href="#shop" data-route-link="shop">Shop Furniture</a>
+          <a href="#used" data-route-link="used">Used</a>
+          <a href="#about" data-route-link="about">About</a>
+          <a href="#contact" data-route-link="contact">Contact</a>
+        </nav>
+
+        <div class="header-actions">
+          <button
+            class="header-icon-button"
+            id="searchButton"
+            aria-label="Open search"
+          >
+            ⌕
+          </button>
+          <button class="cart-button" id="cartButton">
+            Cart <span id="cartCount">0</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="global-search" id="globalSearchPanel">
+        <div class="shell search-row">
+          <input
+            id="globalSearchInput"
+            type="search"
+            placeholder="Search by collection, finish, product or model…"
+          />
+          <button class="btn btn-red" id="globalSearchSubmit">Search</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- HOME -->
+      <section class="page active" data-page="home">
+        <section class="hero">
+          <div class="shell hero-grid">
+            <div class="hero-copy">
+              <span class="eyebrow">FURNITURE THAT BELONGS TOGETHER</span>
+              <h1>Build the office.<br /><em>Not just the desk.</em></h1>
+              <p class="hero-lead">
+                Shop coordinated desks, credenzas, bookcases, files and seating
+                by collection, finish and room. Less hunting. Less clutter. More
+                complete spaces.
+              </p>
+
+              <div class="hero-actions">
+                <a
+                  href="#collections"
+                  data-route-link="collections"
+                  class="btn btn-red"
+                  >Build a complete office</a
+                >
+                <a
+                  href="#used"
+                  data-route-link="used"
+                  class="btn btn-dark-outline"
+                  >Explore used furniture</a
+                >
+              </div>
+
+              <div class="hero-metrics">
+                <div>
+                  <strong id="liveProductCount">Loading…</strong>
+                  <span>live products from the current storefront</span>
+                </div>
+                <div>
+                  <strong>1917</strong>
+                  <span>family furniture roots in San Antonio</span>
+                </div>
+                <div>
+                  <strong>Texas</strong>
+                  <span>delivery, assembly and placement available</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="hero-visual">
+              <img
+                src="https://www.desksgalore.com/cdn/shop/products/ashgray_530x%402x.webp?v=1661878828"
+                alt="Ash Gray coordinated office furniture from Desks Galore"
+              />
+              <div class="hero-visual-card">
+                <span>FEATURED COMPLETE OFFICE</span>
+                <strong>Ash Gray Collection</strong>
+                <small
+                  >Executive desk · Credenza · Hutch · Bookcases · File</small
+                >
+                <button class="link-button" data-collection-button="Ash Gray">
+                  Shop the collection →
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="value-strip">
+          <div class="shell value-grid">
+            <article>
+              <span class="value-icon">01</span>
+              <div>
+                <strong>Shop by collection</strong
+                ><small>Matching finishes stay together.</small>
+              </div>
+            </article>
+            <article>
+              <span class="value-icon">02</span>
+              <div>
+                <strong>Build complete rooms</strong
+                ><small>Desk + storage + seating in one flow.</small>
+              </div>
+            </article>
+            <article>
+              <span class="value-icon">03</span>
+              <div>
+                <strong>New + used</strong
+                ><small>Premium suites and one-of-a-kind value.</small>
+              </div>
+            </article>
+            <article>
+              <span class="value-icon">04</span>
+              <div>
+                <strong>Delivery + setup</strong
+                ><small>Placed where you want it in Texas.</small>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="section section-cream">
+          <div class="shell">
+            <div class="section-heading split-heading">
+              <div>
+                <span class="eyebrow">SHOP COORDINATED ROOMS</span>
+                <h2>Choose the collection.<br />Build the whole room.</h2>
+              </div>
+              <p>
+                Each collection below is built from furniture already sold by
+                Desks Galore. We keep visually related pieces together so a
+                customer can furnish an entire office without bouncing through
+                unrelated categories.
+              </p>
+            </div>
+
+            <div class="feature-collection-grid">
+              <article class="feature-collection-card">
+                <div class="feature-image">
+                  <img
+                    src="https://www.desksgalore.com/cdn/shop/products/ashgray_530x%402x.webp?v=1661878828"
+                    alt="Ash Gray office collection"
+                  />
+                  <span class="badge badge-red">Most complete</span>
+                </div>
+                <div class="feature-card-body">
+                  <span class="micro-label">TRADITIONAL · ASH GRAY</span>
+                  <h3>Ash Gray Executive Office</h3>
+                  <p>
+                    Executive desk, L-shape, credenza, hutch, open bookcase,
+                    door bookcase and combo file.
+                  </p>
+                  <button class="link-button" data-collection-button="Ash Gray">
+                    Build this office →
+                  </button>
+                </div>
+              </article>
+
+              <article class="feature-collection-card">
+                <div class="feature-image feature-image-white">
+                  <img
+                    src="https://www.desksgalore.com/cdn/shop/files/H742-34_530x%402x.webp?v=1766876793"
+                    alt="Robbinsdale Antique White writing desk"
+                  />
+                  <span class="badge badge-yellow">Home office</span>
+                </div>
+                <div class="feature-card-body">
+                  <span class="micro-label"
+                    >MODERN FARMHOUSE · ANTIQUE WHITE</span
+                  >
+                  <h3>Robbinsdale Home Office</h3>
+                  <p>
+                    A lighter home-office family with writing desk, L-shaped
+                    desk and matching bookshelf.
+                  </p>
+                  <button
+                    class="link-button"
+                    data-collection-button="Robbinsdale"
+                  >
+                    Build this office →
+                  </button>
+                </div>
+              </article>
+
+              <article class="feature-collection-card">
+                <div class="feature-image feature-image-white">
+                  <img
+                    src="https://www.desksgalore.com/cdn/shop/files/I3184-300T_1_530x%402x.jpg?v=1744231284"
+                    alt="Coffee Executive Desk"
+                  />
+                  <span class="badge badge-dark">Executive</span>
+                </div>
+                <div class="feature-card-body">
+                  <span class="micro-label">TRADITIONAL · COFFEE</span>
+                  <h3>Coffee Executive Suite</h3>
+                  <p>
+                    Executive and secretary desks paired with matching bookcase,
+                    display cabinet and combo file.
+                  </p>
+                  <button class="link-button" data-collection-button="Coffee">
+                    Build this office →
+                  </button>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="section bundle-section">
+          <div class="shell">
+            <div class="bundle-layout">
+              <div class="bundle-story">
+                <span class="eyebrow">BUY THE ROOM</span>
+                <h2>One desk becomes an office.</h2>
+                <p>
+                  The biggest merchandising change: the site now places matching
+                  pieces beside the hero item instead of sending shoppers back
+                  into the catalog to hunt for them.
+                </p>
+                <div class="bundle-total-box">
+                  <span>Ash Gray starter office</span>
+                  <strong id="ashBundleTotal">$3,699.85</strong>
+                  <small>Executive desk + credenza + open bookcase</small>
+                </div>
+                <button class="btn btn-red" id="addAshBundle">
+                  Add the full office
+                </button>
+              </div>
+
+              <div class="bundle-products" id="ashBundleProducts"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section section-charcoal">
+          <div class="shell">
+            <div class="section-heading split-heading section-heading-light">
+              <div>
+                <span class="eyebrow eyebrow-yellow"
+                  >MATCH BY STYLE + FINISH</span
+                >
+                <h2>The product page should sell the next piece.</h2>
+              </div>
+              <p>
+                A customer who loves a warm Coffee finish should immediately see
+                the matching desk, bookcase and file, plus a chair that
+                complements the suite.
+              </p>
+            </div>
+
+            <div class="dark-showcase">
+              <div class="dark-showcase-image">
+                <img
+                  src="https://www.desksgalore.com/cdn/shop/files/I3184-300T_1_530x%402x.jpg?v=1744231284"
+                  alt="Coffee Executive Desk"
+                />
+                <div class="showcase-caption">
+                  <small>COFFEE EXECUTIVE SUITE</small>
+                  <strong>Rich, traditional, coordinated.</strong>
+                </div>
+              </div>
+              <div class="dark-showcase-products" id="coffeeShowcase"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="shell">
+            <div class="section-heading split-heading">
+              <div>
+                <span class="eyebrow">SHOP BY NEED</span>
+                <h2>
+                  Customers know the room.<br />We organize the inventory.
+                </h2>
+              </div>
+              <p>
+                These paths replace the “everything mixed together” feeling with
+                clear shopping intent.
+              </p>
+            </div>
+
+            <div class="need-grid">
+              <button data-room-button="Executive">
+                <span>Executive Offices</span
+                ><small>Statement desks + coordinated storage</small>
+              </button>
+              <button data-room-button="Home Office">
+                <span>Home Offices</span
+                ><small>Smaller footprints + lighter finishes</small>
+              </button>
+              <button data-room-button="Conference">
+                <span>Conference Rooms</span
+                ><small>Meeting tables + coordinated seating</small>
+              </button>
+              <button data-category-button="Storage">
+                <span>Storage</span
+                ><small>Bookcases + credenzas + files + hutches</small>
+              </button>
+              <button data-category-button="Chair">
+                <span>Seating</span
+                ><small>Executive, task + guest chairs</small>
+              </button>
+              <button data-condition-button="Used">
+                <span>Used & One-of-a-Kind</span
+                ><small>Value finds organized by function</small>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="section used-home-preview">
+          <div class="shell used-home-grid">
+            <div class="used-home-image">
+              <img
+                src="https://www.desksgalore.com/cdn/shop/collections/IMG_0558_1200x1200.jpg?v=1633965015"
+                alt="Desks Galore used office furniture showroom"
+              />
+            </div>
+            <div class="used-home-copy">
+              <span class="eyebrow">USED, WITHOUT THE CHAOS</span>
+              <h2>The treasure hunt gets an aisle map.</h2>
+              <p>
+                The existing used selection is a real competitive advantage. The
+                rebuild turns it into a structured shopping destination: used
+                desks, used seating, used storage and used tables, with
+                one-of-a-kind availability clearly called out.
+              </p>
+              <ul class="check-list">
+                <li>Organized by furniture type</li>
+                <li>Filtered by finish and function</li>
+                <li>“1 only” scarcity kept visible</li>
+                <li>Sale pricing shown cleanly</li>
+              </ul>
+              <a href="#used" data-route-link="used" class="btn btn-yellow"
+                >Shop used furniture</a
+              >
+            </div>
+          </div>
+        </section>
+
+        <section class="section review-section">
+          <div class="shell">
+            <div class="review-summary">
+              <div>
+                <span class="eyebrow">SOCIAL PROOF</span>
+                <h2>Let the reputation do some selling.</h2>
+              </div>
+              <div class="rating-panel">
+                <strong>4.6 <span>/ 5</span></strong>
+                <div class="stars" aria-label="4.6 out of 5 stars">★★★★★</div>
+                <span>483 reviews in Birdeye’s current aggregation</span>
+                <small>479 attributed to Google in that aggregation</small>
+              </div>
+            </div>
+
+            <div class="review-grid">
+              <article>
+                <div class="stars">★★★★★</div>
+                <p>“So many options that are affordable.”</p>
+                <span>Recent customer review theme</span>
+              </article>
+              <article>
+                <div class="stars">★★★★★</div>
+                <p>“David was super helpful.”</p>
+                <span>Recent customer review theme</span>
+              </article>
+              <article>
+                <div class="stars">★★★★★</div>
+                <p>“Went the extra mile.”</p>
+                <span>Recent customer review theme</span>
+              </article>
+            </div>
+
+            <div class="review-actions">
+              <a
+                class="btn btn-red"
+                target="_blank"
+                rel="noopener"
+                href="https://www.google.com/maps/place/Desks%2BGalore/@29.4203502,-98.6475941,17z/data=!4m8!3m7!1s0x865c58a34a07a6b5:0x603798e053ea2212!8m2!3d29.4204265!4d-98.645879!9m1!1b1!16s%2Fg%2F1tf36cng?entry=ttu"
+              >
+                Read / leave a Google review
+              </a>
+              <a
+                class="btn btn-dark-outline"
+                target="_blank"
+                rel="noopener"
+                href="https://reviews.birdeye.com/desks-galore-166601732418958"
+              >
+                View review profile
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <section class="section delivery-section">
+          <div class="shell delivery-grid">
+            <div>
+              <span class="eyebrow">DELIVERY + SETUP</span>
+              <h2>From showroom floor to finished room.</h2>
+              <p>
+                Desks Galore states that it delivers and sets up furniture
+                anywhere in Texas, including assembly and placement.
+              </p>
+            </div>
+            <div class="delivery-pricing">
+              <article>
+                <span>San Antonio delivery</span><strong>$229.95</strong>
+              </article>
+              <article>
+                <span>Upstairs surcharge</span><strong>+$50</strong>
+              </article>
+              <article>
+                <span>Load size</span><strong>1 piece → 26' truck</strong>
+              </article>
+              <article>
+                <span>Pickup</span><strong>Loading help available</strong>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="section showroom-home">
+          <div class="shell showroom-home-grid">
+            <div>
+              <span class="eyebrow">VISIT THE SHOWROOM</span>
+              <h2>See it. Sit in it. Match it.</h2>
+              <p>
+                8111 Meadow Leaf, San Antonio, TX 78227<br />
+                Monday–Saturday 9:00am–6:00pm · Sunday 12:00pm–5:00pm
+              </p>
+              <div class="button-row">
+                <a class="btn btn-red" href="tel:+12102230004"
+                  >Call (210) 223-0004</a
+                >
+                <a
+                  class="btn btn-dark-outline"
+                  target="_blank"
+                  rel="noopener"
+                  href="https://www.google.com/maps/search/?api=1&query=8111+Meadow+Leaf+San+Antonio+TX+78227"
+                >
+                  Get directions
+                </a>
+              </div>
+            </div>
+            <div class="showroom-photo">
+              <img
+                src="https://www.desksgalore.com/cdn/shop/files/image_fe95b174-7b42-4b73-ab00-6255a93cef96_2048x.jpg?v=1767135237"
+                alt="Desks Galore showroom inventory"
+              />
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- COLLECTIONS PAGE -->
+      <section class="page" data-page="collections">
+        <section class="page-hero compact-hero">
+          <div class="shell">
+            <span class="eyebrow">OFFICE COLLECTIONS</span>
+            <h1>Furniture families,<br /><em>kept together.</em></h1>
+            <p>
+              Choose a finish and see the desk, storage and supporting pieces
+              that belong beside it.
+            </p>
+          </div>
+        </section>
+
+        <section class="section section-cream">
+          <div class="shell">
+            <div class="collection-page-grid" id="collectionPageGrid"></div>
+          </div>
+        </section>
+      </section>
+
+      <!-- SHOP PAGE -->
+      <section class="page" data-page="shop">
+        <section class="page-hero shop-page-hero">
+          <div class="shell">
+            <span class="eyebrow">SHOP FURNITURE</span>
+            <h1>Find the piece.<br /><em>Finish the room.</em></h1>
+            <p>
+              Browse the live Desks Galore inventory by room, furniture family,
+              finish and function, with matching pieces kept close together.
+            </p>
+          </div>
+        </section>
+
+        <section class="section catalog-section">
+          <div class="shell">
+            <div class="catalog-toolbar">
+              <div class="filter-chips" id="filterChips">
+                <button class="filter-chip active" data-filter="all">
+                  All
+                </button>
+                <button class="filter-chip" data-filter="Office">Office</button>
+                <button class="filter-chip" data-filter="Conference">
+                  Conference
+                </button>
+                <button class="filter-chip" data-filter="Living">Living</button>
+                <button class="filter-chip" data-filter="Dining">Dining</button>
+                <button class="filter-chip" data-filter="Storage">
+                  Storage
+                </button>
+                <button class="filter-chip" data-filter="Seating">
+                  Seating
+                </button>
+                <button class="filter-chip" data-filter="Used">Used</button>
+              </div>
+
+              <div class="catalog-controls">
+                <input
+                  id="catalogSearch"
+                  type="search"
+                  placeholder="Search products…"
+                  aria-label="Search products"
+                />
+                <select id="catalogSort" aria-label="Sort products">
+                  <option value="featured">Featured</option>
+                  <option value="price-low">Price: low to high</option>
+                  <option value="price-high">Price: high to low</option>
+                  <option value="name">Name: A–Z</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="catalog-status">
+              <span
+                ><strong id="catalogCount">0</strong> products
+                <span id="catalogSourceLabel"
+                  >loading from Desks Galore…</span
+                ></span
+              >
+              <button id="resetCatalog">Reset filters</button>
+            </div>
+
+            <div class="catalog-filter-row">
+              <select id="roomFilter" aria-label="Filter by room">
+                <option value="all">All rooms</option>
+              </select>
+
+              <select id="collectionFilter" aria-label="Filter by collection">
+                <option value="all">All collections</option>
+              </select>
+
+              <select id="categoryFilter" aria-label="Filter by furniture type">
+                <option value="all">All furniture types</option>
+              </select>
+
+              <select id="finishFilter" aria-label="Filter by finish">
+                <option value="all">All finishes / families</option>
+              </select>
+
+              <select id="conditionFilter" aria-label="Filter by condition">
+                <option value="all">New + used</option>
+                <option value="New">New</option>
+                <option value="Used">Used</option>
+              </select>
+            </div>
+
+            <div class="catalog-loading" id="catalogLoading">
+              <span class="loading-dot"></span>
+              <span>Loading and organizing the live Desks Galore catalog…</span>
+            </div>
+
+            <section
+              class="conference-merchandising"
+              id="conferenceMerchandising"
+              aria-label="Build a conference room"
+            ></section>
+
+            <section
+              class="merchandising-clusters"
+              id="merchandisingClusters"
+              aria-label="Matching furniture collections"
+            ></section>
+
+            <div class="product-grid" id="productGrid"></div>
+
+            <div class="catalog-pagination" id="catalogPagination" hidden>
+              <p id="catalogShowing"></p>
+              <button class="btn btn-dark-outline" id="loadMoreProducts">
+                Load more furniture
+              </button>
+            </div>
+
+            <div class="prototype-note" id="catalogNote">
+              <strong>Live-catalog build:</strong>
+              the storefront attempts to load every currently published Desks
+              Galore product from Shopify’s public catalog feed, then applies
+              our new room / type / collection / finish organization
+              automatically.
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- USED PAGE -->
+      <section class="page" data-page="used">
+        <section class="page-hero used-page-hero">
+          <div class="shell used-page-hero-grid">
+            <div>
+              <span class="eyebrow">USED + ONE-OF-A-KIND</span>
+              <h1>Value finds.<br /><em>Organized.</em></h1>
+              <p>
+                Keep the thrill of discovering a deal, but organize it by what
+                the customer is actually trying to furnish.
+              </p>
+            </div>
+
+            <img
+              src="https://www.desksgalore.com/cdn/shop/collections/IMG_0558_1200x1200.jpg?v=1633965015"
+              alt="Used furniture showroom at Desks Galore"
+            />
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="shell">
+            <div class="used-category-grid">
+              <button data-used-type="Desk">
+                <span>Used Desks</span>
+                <small>Executive, writing, L-shape, adjustable</small>
+              </button>
+
+              <button data-used-type="Chair">
+                <span>Used Seating</span>
+                <small>Task, executive and guest chairs</small>
+              </button>
+
+              <button data-used-type="Storage">
+                <span>Used Storage</span>
+                <small>Files, bookcases, credenzas and cabinets</small>
+              </button>
+
+              <button data-used-type="Table">
+                <span>Used Tables</span>
+                <small>Conference, work, accent and occasional</small>
+              </button>
+            </div>
+
+            <div class="used-product-feature">
+              <div>
+                <img
+                  src="https://www.desksgalore.com/cdn/shop/files/image_5777ec81-7273-40e7-bc6b-0a6d04b1f5f8_2048x.jpg?v=1774972171"
+                  alt="Used power adjustable desk from Desks Galore"
+                />
+              </div>
+
+              <div>
+                <span class="eyebrow"
+                  >EXAMPLE OF CLEANER USED MERCHANDISING</span
+                >
+                <h2>Used Power Adjustable Desk</h2>
+
+                <p>
+                  Instead of dropping this into a giant mixed used bucket, the
+                  rebuild identifies it as:
+                  <strong
+                    >Used → Office → Adjustable Desk → Neutral Finish</strong
+                  >.
+                </p>
+
+                <div class="price-line">
+                  <s>$399.95</s>
+                  <strong>$199.98</strong>
+                </div>
+
+                <span class="scarcity-pill"
+                  >One-of-a-kind / limited used inventory</span
+                >
+
+                <button class="btn btn-red" data-condition-button="Used">
+                  Browse used catalog
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section section-charcoal">
+          <div class="shell">
+            <div class="section-heading section-heading-light">
+              <span class="eyebrow eyebrow-yellow"
+                >REAL SHOWROOM INVENTORY</span
+              >
+              <h2>
+                Big selection stays a strength.<br />We just remove the visual
+                noise.
+              </h2>
+            </div>
+
+            <div class="used-photo-grid">
+              <img
+                src="https://www.desksgalore.com/cdn/shop/files/image_fe95b174-7b42-4b73-ab00-6255a93cef96_2048x.jpg?v=1767135237"
+                alt="Rows of used desks and credenzas"
+              />
+
+              <img
+                src="https://www.desksgalore.com/cdn/shop/products/IMG_0651_1024x1024%402x.jpg?v=1633980541"
+                alt="Used stackable guest chairs"
+              />
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- ABOUT PAGE -->
+      <section class="page" data-page="about">
+        <section class="page-hero about-page-hero">
+          <div class="shell">
+            <span class="eyebrow">ABOUT DESKS GALORE</span>
+            <h1>
+              A San Antonio furniture story<br /><em
+                >more than a century deep.</em
+              >
+            </h1>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="shell about-grid">
+            <div class="about-story">
+              <span class="eyebrow">THE FAMILY HISTORY</span>
+              <h2>Furniture roots dating to 1917.</h2>
+
+              <p>
+                Desks Galore dates to 2006, while the family’s furniture history
+                began in 1917 with a secondhand furniture store in downtown San
+                Antonio.
+              </p>
+
+              <p>
+                The business evolved into National Furniture in 1951. The family
+                later sold National Furniture, and has since reacquired the
+                business. Today, Desks Galore and National Furniture continue
+                that family furniture legacy in San Antonio.
+              </p>
+
+              <p>
+                David C. is the current owner and the great-grandson of the
+                owner of the original 1917 furniture business.
+              </p>
+            </div>
+
+            <div class="history-timeline">
+              <article>
+                <strong>1917</strong>
+                <span
+                  >Family furniture business begins in downtown San
+                  Antonio.</span
+                >
+              </article>
+
+              <article>
+                <strong>1951</strong>
+                <span
+                  >The business becomes National Furniture and expands.</span
+                >
+              </article>
+
+              <article>
+                <strong>2006</strong>
+                <span>Desks Galore is started by David C.</span>
+              </article>
+
+              <article>
+                <strong>Today</strong>
+                <span
+                  >New, used and coordinated furniture for homes and offices
+                  across Texas.</span
+                >
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="section section-yellow brand-promise">
+          <div class="shell">
+            <span class="eyebrow eyebrow-dark">THE REBUILD POSITIONING</span>
+            <h2>
+              Huge inventory.<br />Showroom knowledge.<br />Much cleaner digital
+              experience.
+            </h2>
+          </div>
+        </section>
+      </section>
+
+      <!-- CONTACT PAGE -->
+      <section class="page" data-page="contact">
+        <section class="page-hero contact-page-hero">
+          <div class="shell">
+            <span class="eyebrow">CONTACT DESKS GALORE</span>
+            <h1>
+              Questions about a piece?<br /><em>Talk to the showroom.</em>
+            </h1>
+            <p>
+              Call, visit, use the contact form, or connect through the
+              company’s social channels.
+            </p>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="shell contact-layout">
+            <div class="contact-details">
+              <span class="eyebrow">SHOWROOM INFORMATION</span>
+              <h2>San Antonio</h2>
+
+              <dl class="contact-list">
+                <div>
+                  <dt>Address</dt>
+                  <dd>8111 Meadow Leaf<br />San Antonio, TX 78227</dd>
+                </div>
+
+                <div>
+                  <dt>Phone</dt>
+                  <dd><a href="tel:+12102230004">(210) 223-0004</a></dd>
+                </div>
+
+                <div>
+                  <dt>Hours</dt>
+                  <dd>
+                    Mon–Sat: 9:00am–6:00pm<br />
+                    Sunday: 12:00pm–5:00pm
+                  </dd>
+                </div>
+
+                <div>
+                  <dt>Email</dt>
+                  <dd>
+                    The current official website does not publish a direct email
+                    address. Use the contact form or call the showroom.
+                  </dd>
+                </div>
+
+                <div>
+                  <dt>Social</dt>
+                  <dd>
+                    @desksgalore on Instagram, TikTok and Facebook<br />
+                    YouTube also linked through the official social hub
+                  </dd>
+                </div>
+              </dl>
+
+              <div class="contact-link-grid">
+                <a
+                  target="_blank"
+                  rel="noopener"
+                  href="https://linktr.ee/desksgalore"
+                >
+                  Official social hub
+                </a>
+
+                <a
+                  target="_blank"
+                  rel="noopener"
+                  href="https://www.google.com/maps/search/?api=1&query=8111+Meadow+Leaf+San+Antonio+TX+78227"
+                >
+                  Directions
+                </a>
+
+                <a
+                  target="_blank"
+                  rel="noopener"
+                  href="https://www.desksgalore.com/pages/delivery-pickup"
+                >
+                  Delivery information
+                </a>
+
+                <a
+                  target="_blank"
+                  rel="noopener"
+                  href="https://www.desksgalore.com/pages/contact-us"
+                >
+                  Current contact page
+                </a>
+              </div>
+            </div>
+
+            <div class="contact-form-panel">
+              <span class="micro-label">CONTACT FORM</span>
+              <h3>What are you furnishing?</h3>
+
+              <form id="contactForm">
+                <label>
+                  Name
+                  <input
+                    id="contactName"
+                    type="text"
+                    required
+                    placeholder="Your name"
+                  />
+                </label>
+
+                <label>
+                  Email
+                  <input
+                    id="contactEmail"
+                    type="email"
+                    required
+                    placeholder="you@example.com"
+                  />
+                </label>
+
+                <label>
+                  Phone
+                  <input
+                    id="contactPhone"
+                    type="tel"
+                    placeholder="(210) 555-0000"
+                  />
+                </label>
+
+                <label>
+                  I'm shopping for
+                  <select id="contactNeed">
+                    <option>Complete office</option>
+                    <option>Desk</option>
+                    <option>Chair</option>
+                    <option>Storage</option>
+                    <option>Conference room</option>
+                    <option>Used furniture</option>
+                    <option>Delivery / setup</option>
+                  </select>
+                </label>
+
+                <label>
+                  Message
+                  <textarea
+                    id="contactMessage"
+                    required
+                    rows="5"
+                    placeholder="Tell us about your room, dimensions, finish or pieces you're considering."
+                  ></textarea>
+                </label>
+
+                <button type="submit" class="btn btn-red btn-full">
+                  Send inquiry
+                </button>
+
+                <p class="form-note" id="contactFormNote">
+                  Prototype form: connect this to the client’s final inbox /
+                  Shopify contact endpoint at launch.
+                </p>
+              </form>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="shell footer-grid">
+        <div class="footer-brand">
+          <span class="brand-wordmark">DESKS GALORE</span>
+          <span class="brand-sub">SAN ANTONIO · NEW + USED FURNITURE</span>
+          <p>
+            Coordinated furniture, one-of-a-kind finds, delivery and setup
+            across Texas.
+          </p>
+        </div>
+
+        <div>
+          <h4>Shop</h4>
+          <a href="#collections" data-route-link="collections"
+            >Office Collections</a
+          >
+          <a href="#shop" data-route-link="shop">All Furniture</a>
+          <a href="#used" data-route-link="used">Used Furniture</a>
+        </div>
+
+        <div>
+          <h4>Company</h4>
+          <a href="#about" data-route-link="about">About</a>
+          <a href="#contact" data-route-link="contact">Contact</a>
+          <a
+            target="_blank"
+            rel="noopener"
+            href="https://linktr.ee/desksgalore"
+          >
+            Social Media
+          </a>
+        </div>
+
+        <div>
+          <h4>Showroom</h4>
+          <p>8111 Meadow Leaf<br />San Antonio, TX 78227</p>
+          <a href="tel:+12102230004">(210) 223-0004</a>
+          <span>Mon–Sat 9–6<br />Sun 12–5</span>
+        </div>
+      </div>
+
+      <div class="shell footer-bottom">
+        <span
+          >© <span id="year"></span> Desks Galore. Website redesign
+          preview.</span
+        >
+        <span
+          >Live public-store product data + real current-store
+          photography.</span
+        >
+      </div>
+    </footer>
+
+    <!-- PRODUCT MODAL -->
+    <div class="modal" id="productModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close-product></div>
+
+      <div
+        class="product-modal-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="productModalTitle"
+      >
+        <button
+          class="modal-close"
+          data-close-product
+          aria-label="Close product"
+        >
+          ×
+        </button>
+
+        <div class="product-modal-image">
+          <img id="productModalImage" src="" alt="" />
+        </div>
+
+        <div class="product-modal-content">
+          <span class="micro-label" id="productModalCollection"></span>
+          <h2 id="productModalTitle"></h2>
+          <p class="product-modal-subtitle" id="productModalSubtitle"></p>
+
+          <div class="modal-price" id="productModalPrice"></div>
+
+          <p id="productModalDescription"></p>
+
+          <div class="product-detail-grid">
+            <div>
+              <span>Model</span>
+              <strong id="productModalModel"></strong>
+            </div>
+
+            <div>
+              <span>Finish</span>
+              <strong id="productModalFinish"></strong>
+            </div>
+
+            <div>
+              <span>Room</span>
+              <strong id="productModalRoom"></strong>
+            </div>
+
+            <div>
+              <span>Condition</span>
+              <strong id="productModalCondition"></strong>
+            </div>
+          </div>
+
+          <div class="modal-button-row">
+            <button class="btn btn-red" id="modalAddToCart">Add to cart</button>
+
+            <a
+              class="btn btn-dark-outline"
+              id="modalOriginalLink"
+              target="_blank"
+              rel="noopener"
+            >
+              View current listing
+            </a>
+          </div>
+
+          <div class="pairs-panel">
+            <span class="micro-label">COMPLETE THE ROOM</span>
+            <h3>Pairs beautifully with</h3>
+            <div id="productModalPairs"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CART -->
+    <aside class="cart-drawer" id="cartDrawer" aria-hidden="true">
+      <div class="cart-backdrop" data-close-cart></div>
+
+      <div class="cart-panel">
+        <div class="cart-header">
+          <div>
+            <span class="micro-label">BUILD THE ROOM</span>
+            <h2>Your cart</h2>
+          </div>
+
+          <button class="cart-close" data-close-cart aria-label="Close cart">
+            ×
+          </button>
+        </div>
+
+        <div class="cart-items" id="cartItems"></div>
+
+        <div class="cart-footer">
+          <div class="cart-total-row">
+            <span>Estimated total</span>
+            <strong id="cartTotal">$0.00</strong>
+          </div>
+
+          <button class="btn btn-red btn-full" id="checkoutButton">
+            Continue to checkout
+          </button>
+
+          <small>
+            This prototype cart is local only. Shopify checkout is connected
+            during production integration.
+          </small>
+        </div>
+      </div>
+    </aside>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
