@@ -1,5 +1,5 @@
 /* =========================================================
-   DESKS GALORE — V6 FINAL-CANDIDATE
+   DESKS GALORE — V7 GALLERY + RECOMMENDATIONS
    Live Shopify catalog + room merchandising + cart + modal
    ========================================================= */
 
@@ -9,35 +9,97 @@ const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 const STORE = "https://www.desksgalore.com";
 const PHONE = "+12102230004";
 
+const BAD_IMAGE_MODELS = new Set(["8530"]);
+
+function isForcedPlaceholder(product) {
+  return BAD_IMAGE_MODELS.has(String(product?.model || ""));
+}
+
+function productPlaceholderMarkup(product) {
+  return `
+    <div class="product-image-placeholder" role="img"
+      aria-label="Product image unavailable for ${escapeHtml(product?.name || "this item")}">
+      <div class="product-image-placeholder__mark">DG</div>
+      <strong>Image coming soon</strong>
+      <span>Call showroom for product details</span>
+      <small>(210) 223-0004</small>
+    </div>
+  `;
+}
+
+function productImageMarkup(product, loading = "lazy", allowKnownBad = false) {
+  if (!product?.image || (!allowKnownBad && isForcedPlaceholder(product))) {
+    return productPlaceholderMarkup(product);
+  }
+
+  return `
+    <img src="${escapeHtml(product.image)}"
+      alt="${escapeHtml(product.name || "Desks Galore furniture")}"
+      loading="${loading}"
+      data-product-name="${escapeHtml(product.name || "")}"
+      data-product-model="${escapeHtml(product.model || "")}"
+      onerror="replaceProductImageWithPlaceholder(this)">
+  `;
+}
+
+function replaceProductImageWithPlaceholder(image) {
+  if (!image) return;
+
+  const product = {
+    name: image.dataset.productName || image.alt || "Desks Galore furniture",
+    model: image.dataset.productModel || "",
+  };
+
+  image.insertAdjacentHTML("afterend", productPlaceholderMarkup(product));
+
+  image.remove();
+}
+
+function productImages(product) {
+  if (!product) return [];
+
+  const images = Array.isArray(product.images) ? product.images : [];
+
+  return unique([product.image, ...images]).filter(Boolean);
+}
+
 const FEATURED_COLLECTIONS = [
   {
     name: "Ash Gray",
     label: "Traditional executive",
-    image: "https://www.desksgalore.com/cdn/shop/products/ashgray_530x%402x.webp?v=1661878828",
-    description: "A complete executive-office family with desks, storage, bookcases, hutches and files.",
-    tags: ["Executive Desk", "Credenza", "Bookcases", "Files"]
+    image:
+      "https://www.desksgalore.com/cdn/shop/products/ashgray_530x%402x.webp?v=1661878828",
+    description:
+      "A complete executive-office family with desks, storage, bookcases, hutches and files.",
+    tags: ["Executive Desk", "Credenza", "Bookcases", "Files"],
   },
   {
     name: "Coffee",
     label: "Warm executive",
-    image: "https://www.desksgalore.com/cdn/shop/files/I3184-300T_1_530x%402x.jpg?v=1744231284",
-    description: "A rich Coffee-finish office family with executive desks and coordinating storage.",
-    tags: ["Executive", "Secretary", "Storage", "Files"]
+    image:
+      "https://www.desksgalore.com/cdn/shop/files/I3184-300T_1_530x%402x.jpg?v=1744231284",
+    description:
+      "A rich Coffee-finish office family with executive desks and coordinating storage.",
+    tags: ["Executive", "Secretary", "Storage", "Files"],
   },
   {
     name: "Robbinsdale Antique White",
     label: "Modern farmhouse",
-    image: "https://www.desksgalore.com/cdn/shop/files/H742-34_530x%402x.webp?v=1766876793",
-    description: "A lighter home-office family with desks and matching storage in Antique White.",
-    tags: ["Home Office", "Writing Desk", "L-Shape", "Bookshelf"]
+    image:
+      "https://www.desksgalore.com/cdn/shop/files/H742-34_530x%402x.webp?v=1766876793",
+    description:
+      "A lighter home-office family with desks and matching storage in Antique White.",
+    tags: ["Home Office", "Writing Desk", "L-Shape", "Bookshelf"],
   },
   {
     name: "Grand Hacienda",
     label: "Rustic statement",
-    image: "https://www.desksgalore.com/cdn/shop/files/image_7bce5e52-dda3-472f-92a1-647b066b8e05_1024x1024%402x.jpg?v=1762115288",
-    description: "A rustic furniture family that bridges office, dining and accent pieces.",
-    tags: ["Rustic", "Office", "Dining", "Storage"]
-  }
+    image:
+      "https://www.desksgalore.com/cdn/shop/files/image_7bce5e52-dda3-472f-92a1-647b066b8e05_1024x1024%402x.jpg?v=1762115288",
+    description:
+      "A rustic furniture family that bridges office, dining and accent pieces.",
+    tags: ["Rustic", "Office", "Dining", "Storage"],
+  },
 ];
 
 const FALLBACK_PRODUCTS = [
@@ -54,9 +116,11 @@ const FALLBACK_PRODUCTS = [
     price: 1499.95,
     compareAt: 1799.95,
     available: true,
-    image: "https://www.desksgalore.com/cdn/shop/products/ashgray_530x%402x.webp?v=1661878828",
+    image:
+      "https://www.desksgalore.com/cdn/shop/products/ashgray_530x%402x.webp?v=1661878828",
     url: `${STORE}/products/ash-grey-68in-executive-desk`,
-    description: "A substantial Ash Gray executive desk that anchors a coordinated office."
+    description:
+      "A substantial Ash Gray executive desk that anchors a coordinated office.",
   },
   {
     id: "ash-credenza",
@@ -71,9 +135,11 @@ const FALLBACK_PRODUCTS = [
     price: 1399.95,
     compareAt: null,
     available: true,
-    image: "https://www.desksgalore.com/cdn/shop/products/i224-317_530x%402x.jpg?v=1725049254",
+    image:
+      "https://www.desksgalore.com/cdn/shop/products/i224-317_530x%402x.jpg?v=1725049254",
     url: `${STORE}/products/ash-grey-credenza-desk-hutch-not-included`,
-    description: "A matching Ash Gray credenza that adds coordinated storage and work surface."
+    description:
+      "A matching Ash Gray credenza that adds coordinated storage and work surface.",
   },
   {
     id: "ash-bookcase",
@@ -88,9 +154,10 @@ const FALLBACK_PRODUCTS = [
     price: 799.95,
     compareAt: null,
     available: true,
-    image: "https://www.desksgalore.com/cdn/shop/products/I224HOGRP3_7_530x%402x.jpg?v=1636058846",
+    image:
+      "https://www.desksgalore.com/cdn/shop/products/I224HOGRP3_7_530x%402x.jpg?v=1636058846",
     url: `${STORE}/products/ash-gray-open-bookcase`,
-    description: "Vertical storage designed for the Ash Gray office family."
+    description: "Vertical storage designed for the Ash Gray office family.",
   },
   {
     id: "coffee-executive",
@@ -105,9 +172,11 @@ const FALLBACK_PRODUCTS = [
     price: 1899.95,
     compareAt: null,
     available: true,
-    image: "https://www.desksgalore.com/cdn/shop/files/I3184-300T_1_530x%402x.jpg?v=1744231284",
+    image:
+      "https://www.desksgalore.com/cdn/shop/files/I3184-300T_1_530x%402x.jpg?v=1744231284",
     url: `${STORE}/products/72-jackson-executive-desk`,
-    description: "A rich Coffee-finish executive desk with coordinating storage pieces."
+    description:
+      "A rich Coffee-finish executive desk with coordinating storage pieces.",
   },
   {
     id: "coffee-bookcase",
@@ -122,9 +191,11 @@ const FALLBACK_PRODUCTS = [
     price: 949.95,
     compareAt: null,
     available: true,
-    image: "https://www.desksgalore.com/cdn/shop/files/I3184-332_1_530x%402x.jpg?v=1744232846",
+    image:
+      "https://www.desksgalore.com/cdn/shop/files/I3184-332_1_530x%402x.jpg?v=1744232846",
     url: `${STORE}/products/34x-77-jackson-door-bookcase`,
-    description: "A matching Coffee bookcase with adjustable shelves and cord access."
+    description:
+      "A matching Coffee bookcase with adjustable shelves and cord access.",
   },
   {
     id: "coffee-file",
@@ -139,9 +210,10 @@ const FALLBACK_PRODUCTS = [
     price: 949.95,
     compareAt: null,
     available: true,
-    image: "https://www.desksgalore.com/cdn/shop/files/I3184-378_1_530x%402x.jpg?v=1744235742",
+    image:
+      "https://www.desksgalore.com/cdn/shop/files/I3184-378_1_530x%402x.jpg?v=1744235742",
     url: `${STORE}/products/jackson-workstation-combo-file`,
-    description: "A coordinating Coffee file and workstation piece."
+    description: "A coordinating Coffee file and workstation piece.",
   },
   {
     id: "robbinsdale-desk",
@@ -156,9 +228,11 @@ const FALLBACK_PRODUCTS = [
     price: 479.95,
     compareAt: null,
     available: true,
-    image: "https://www.desksgalore.com/cdn/shop/files/H742-34_530x%402x.webp?v=1766876793",
+    image:
+      "https://www.desksgalore.com/cdn/shop/files/H742-34_530x%402x.webp?v=1766876793",
     url: `${STORE}/collections/robbinsdale-antique-white/products/8848-60-robbinsdale-antique-white-writing-desk-w-usb-port-419-95`,
-    description: "A bright modern-farmhouse writing desk for a lighter home office."
+    description:
+      "A bright modern-farmhouse writing desk for a lighter home office.",
   },
   {
     id: "used-adjustable",
@@ -173,36 +247,62 @@ const FALLBACK_PRODUCTS = [
     price: 199.98,
     compareAt: 399.95,
     available: true,
-    image: "https://www.desksgalore.com/cdn/shop/files/image_5777ec81-7273-40e7-bc6b-0a6d04b1f5f8_2048x.jpg?v=1774972171",
+    image:
+      "https://www.desksgalore.com/cdn/shop/files/image_5777ec81-7273-40e7-bc6b-0a6d04b1f5f8_2048x.jpg?v=1774972171",
     url: `${STORE}/collections/used-1`,
-    description: "A one-of-a-kind used adjustable desk organized by function and condition."
-  }
+    description:
+      "A one-of-a-kind used adjustable desk organized by function and condition.",
+  },
 ];
 
 const KNOWN_COLLECTIONS = [
-  "Robbinsdale Antique White", "Whitewash Hickory", "Country Two Tone",
-  "Laminate American Espresso", "Laminate American Mahogany", "Laminate Autumn Walnut",
-  "Laminate Artisan Grey", "Laminate American Dark Cherry", "Rustic Laredo",
-  "Grand Hacienda", "Weathered Gray", "Brown Cherry", "French Oak", "Sloane Gray",
-  "Gray Wash", "Aged Ivory", "Dark Gray", "Black 2 Tone", "Rustic Brown",
-  "Rustic White", "Gramercy", "Wimberly", "Cabana", "Biscotti", "Regency",
-  "Peppercorn", "Norcross", "Tuscan", "Coffee", "Ash Gray", "Pewter"
+  "Robbinsdale Antique White",
+  "Whitewash Hickory",
+  "Country Two Tone",
+  "Laminate American Espresso",
+  "Laminate American Mahogany",
+  "Laminate Autumn Walnut",
+  "Laminate Artisan Grey",
+  "Laminate American Dark Cherry",
+  "Rustic Laredo",
+  "Grand Hacienda",
+  "Weathered Gray",
+  "Brown Cherry",
+  "French Oak",
+  "Sloane Gray",
+  "Gray Wash",
+  "Aged Ivory",
+  "Dark Gray",
+  "Black 2 Tone",
+  "Rustic Brown",
+  "Rustic White",
+  "Gramercy",
+  "Wimberly",
+  "Cabana",
+  "Biscotti",
+  "Regency",
+  "Peppercorn",
+  "Norcross",
+  "Tuscan",
+  "Coffee",
+  "Ash Gray",
+  "Pewter",
 ];
 
 const COLLECTION_PRIORITY = {
   "Ash Gray": 300,
-  "Coffee": 280,
+  Coffee: 280,
   "Robbinsdale Antique White": 270,
   "Grand Hacienda": 260,
   "Dark Gray": 245,
   "Brown Cherry": 235,
   "Sloane Gray": 225,
-  "Wimberly": 215,
-  "Cabana": 205,
+  Wimberly: 215,
+  Cabana: 205,
   "Country Two Tone": 190,
-  "Pewter": 175,
-  "Tuscan": 165,
-  "Regency": 155
+  Pewter: 175,
+  Tuscan: 165,
+  Regency: 155,
 };
 
 const CONFERENCE_FINISHES = [
@@ -210,7 +310,7 @@ const CONFERENCE_FINISHES = [
   "American Mahogany",
   "American Dark Cherry",
   "American Espresso",
-  "Artisan Grey"
+  "Artisan Grey",
 ];
 
 let PRODUCTS = [];
@@ -233,7 +333,7 @@ const state = {
   catalogLimit: 48,
   lastCatalogSignature: "",
   currentProduct: null,
-  cart: JSON.parse(localStorage.getItem("dg-v6-cart") || "[]")
+  cart: JSON.parse(localStorage.getItem("dg-v6-cart") || "[]"),
 };
 
 function money(value) {
@@ -245,7 +345,7 @@ function money(value) {
 
   return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "USD"
+    currency: "USD",
   }).format(number);
 }
 
@@ -262,9 +362,7 @@ function stripHtml(html = "") {
   const node = document.createElement("div");
   node.innerHTML = html;
 
-  return (node.textContent || "")
-    .replace(/\s+/g, " ")
-    .trim();
+  return (node.textContent || "").replace(/\s+/g, " ").trim();
 }
 
 function unique(values) {
@@ -274,9 +372,7 @@ function unique(values) {
 function detectCondition(title, tags = []) {
   const text = `${title} ${tags.join(" ")}`;
 
-  return /(^|\s)R\d|\bused\b/i.test(text)
-    ? "Used"
-    : "New";
+  return /(^|\s)R\d|\bused\b/i.test(text) ? "Used" : "New";
 }
 
 function detectCollection(title, tags = []) {
@@ -284,9 +380,7 @@ function detectCollection(title, tags = []) {
 
   const hit = [...KNOWN_COLLECTIONS]
     .sort((a, b) => b.length - a.length)
-    .find(name =>
-      text.toLowerCase().includes(name.toLowerCase())
-    );
+    .find((name) => text.toLowerCase().includes(name.toLowerCase()));
 
   if (hit) {
     return hit;
@@ -334,7 +428,11 @@ function detectCategory(title = "") {
     return "Hutch";
   }
 
-  if (/file cabinet|lateral file|vertical file|combo file|drawer file|mobile file|\bfile\b/.test(t)) {
+  if (
+    /file cabinet|lateral file|vertical file|combo file|drawer file|mobile file|\bfile\b/.test(
+      t,
+    )
+  ) {
     return "File Cabinet";
   }
 
@@ -362,7 +460,11 @@ function detectCategory(title = "") {
     return "Dining Table / Set";
   }
 
-  if (/coffee table|end table|console table|occasional table|accent table|sofa table/.test(t)) {
+  if (
+    /coffee table|end table|console table|occasional table|accent table|sofa table/.test(
+      t,
+    )
+  ) {
     return "Living Table";
   }
 
@@ -416,7 +518,11 @@ function detectRoom(title = "", category = "") {
     return "Dining";
   }
 
-  if (/sofa|loveseat|love seat|sectional|recliner|coffee table|end table|console table|occasional/.test(t)) {
+  if (
+    /sofa|loveseat|love seat|sectional|recliner|coffee table|end table|console table|occasional/.test(
+      t,
+    )
+  ) {
     return "Living";
   }
 
@@ -429,8 +535,9 @@ function detectRoom(title = "", category = "") {
   }
 
   if (
-    ["Bookcase", "Hutch", "File Cabinet", "Credenza / Cabinet"]
-      .includes(category)
+    ["Bookcase", "Hutch", "File Cabinet", "Credenza / Cabinet"].includes(
+      category,
+    )
   ) {
     return "Storage";
   }
@@ -445,10 +552,7 @@ function detectRoom(title = "", category = "") {
     return "Seating";
   }
 
-  if (
-    /desk|reception|workstation/.test(t) ||
-    category.includes("Desk")
-  ) {
+  if (/desk|reception|workstation/.test(t) || category.includes("Desk")) {
     return "Office";
   }
 
@@ -514,21 +618,16 @@ function detectFinish(title = "", collection = "") {
     ["Rustic White", /rustic white/i],
     ["White", /\bwhite\b/i],
     ["Black", /\bblack\b/i],
-    ["Natural / Light Wood", /natural|light wood|blonde/i]
+    ["Natural / Light Wood", /natural|light wood|blonde/i],
   ];
 
-  const hit = rules.find(([, regex]) =>
-    regex.test(text)
-  );
+  const hit = rules.find(([, regex]) => regex.test(text));
 
   if (hit) {
     return hit[0];
   }
 
-  if (
-    collection &&
-    collection !== "Unassigned / Mix & Match"
-  ) {
+  if (collection && collection !== "Unassigned / Mix & Match") {
     return collection;
   }
 
@@ -537,7 +636,7 @@ function detectFinish(title = "", collection = "") {
 
 function extractDimensions(title = "") {
   const match = String(title).match(
-    /(\d+(?:\.\d+)?)\s*(?:["”]|in)?\s*[x×]\s*(\d+(?:\.\d+)?)\s*(?:["”]|in)?(?:\s*[x×]\s*(\d+(?:\.\d+)?)\s*(?:["”]|in)?)?/i
+    /(\d+(?:\.\d+)?)\s*(?:["”]|in)?\s*[x×]\s*(\d+(?:\.\d+)?)\s*(?:["”]|in)?(?:\s*[x×]\s*(\d+(?:\.\d+)?)\s*(?:["”]|in)?)?/i,
   );
 
   if (!match) {
@@ -552,61 +651,34 @@ function extractDimensions(title = "") {
 function requiresQuote(title = "", price = 0) {
   return (
     Number(price) <= 0 ||
-    /call\s*(?:store|for)|custom\s*size|pricing/i.test(
-      String(title)
-    )
+    /call\s*(?:store|for)|custom\s*size|pricing/i.test(String(title))
   );
 }
 
 function cleanProductName(
   title = "",
   category = "Furniture",
-  condition = "New"
+  condition = "New",
 ) {
-  let name = String(
-    title || "Untitled product"
-  );
+  let name = String(title || "Untitled product");
 
-  name = name.replace(
-    /^#?[A-Z]{0,4}\d+[A-Z0-9/-]*\s+/i,
-    ""
-  );
+  name = name.replace(/^#?[A-Z]{0,4}\d+[A-Z0-9/-]*\s+/i, "");
 
-  name = name.replace(
-    /^\d+(?:\.\d+)?\s*(?:'|’|ft)\s+/i,
-    ""
-  );
+  name = name.replace(/^\d+(?:\.\d+)?\s*(?:'|’|ft)\s+/i, "");
 
-  name = name.replace(
-    /\$[\d,]+(?:\.\d{2})?/g,
-    ""
-  );
+  name = name.replace(/\$[\d,]+(?:\.\d{2})?/g, "");
 
-  name = name.replace(
-    /\(\s*out of stock\s*\)/ig,
-    ""
-  );
+  name = name.replace(/\(\s*out of stock\s*\)/gi, "");
 
-  name = name.replace(
-    /\(\s*floor model\s*\)/ig,
-    ""
-  );
+  name = name.replace(/\(\s*floor model\s*\)/gi, "");
 
-  name = name.replace(
-    /[-–—]\s*1\s*only\b/ig,
-    ""
-  );
+  name = name.replace(/[-–—]\s*1\s*only\b/gi, "");
 
   if (condition === "Used") {
-    name = name.replace(
-      /\bused\b/ig,
-      ""
-    );
+    name = name.replace(/\bused\b/gi, "");
   }
 
-  name = name
-    .replace(/\bLam\b/ig, "Laminate")
-    .replace(/\bw\/\s*/ig, "with ");
+  name = name.replace(/\bLam\b/gi, "Laminate").replace(/\bw\/\s*/gi, "with ");
 
   name = name
     .replace(/\s{2,}/g, " ")
@@ -616,11 +688,7 @@ function cleanProductName(
   return name || category;
 }
 
-function chooseBestImage(
-  images = [],
-  category = "",
-  title = ""
-) {
+function chooseBestImage(images = [], category = "", title = "") {
   if (!images.length) {
     return "";
   }
@@ -633,45 +701,27 @@ function chooseBestImage(
       const width = Number(img?.width || 0);
       const height = Number(img?.height || 0);
 
-      const ratio =
-        width && height
-          ? width / height
-          : 1;
+      const ratio = width && height ? width / height : 1;
 
-      const area =
-        width * height;
+      const area = width * height;
 
-      const text =
-        `${src} ${img?.alt || ""}`.toLowerCase();
+      const text = `${src} ${img?.alt || ""}`.toLowerCase();
 
-      let score =
-        Math.min(area / 100000, 20) -
-        index * 0.25;
+      let score = Math.min(area / 100000, 20) - index * 0.25;
 
-      if (
-        /swatch|sample|finish[_ -]?sample|color[_ -]?chip/.test(text)
-      ) {
+      if (/swatch|sample|finish[_ -]?sample|color[_ -]?chip/.test(text)) {
         score -= 80;
       }
 
-      if (
-        tableLike &&
-        ratio >= 1.2
-      ) {
+      if (tableLike && ratio >= 1.2) {
         score += 20;
       }
 
-      if (
-        tableLike &&
-        ratio < 0.8
-      ) {
+      if (tableLike && ratio < 0.8) {
         score -= 15;
       }
 
-      if (
-        category === "Conference Table" &&
-        index > 0
-      ) {
+      if (category === "Conference Table" && index > 0) {
         score += 10;
       }
 
@@ -684,110 +734,65 @@ function chooseBestImage(
 
       return {
         src,
-        score
+        score,
       };
     })
-    .sort((a, b) =>
-      b.score - a.score
-    );
+    .sort((a, b) => b.score - a.score);
 
-  return (
-    scored[0]?.src ||
-    images[0]?.src ||
-    ""
-  );
+  return scored[0]?.src || images[0]?.src || "";
 }
 
 function normalizeProduct(raw) {
-  const title =
-    raw.title ||
-    "Untitled product";
+  const title = raw.title || "Untitled product";
 
-  const tags =
-    Array.isArray(raw.tags)
-      ? raw.tags
-      : String(raw.tags || "")
-          .split(",")
-          .map(tag => tag.trim())
-          .filter(Boolean);
+  const tags = Array.isArray(raw.tags)
+    ? raw.tags
+    : String(raw.tags || "")
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter(Boolean);
 
-  const condition =
-    detectCondition(title, tags);
+  const condition = detectCondition(title, tags);
 
-  const category =
-    detectCategory(title);
+  const category = detectCategory(title);
 
-  const collection =
-    detectCollection(title, tags);
+  const collection = detectCollection(title, tags);
 
-  const room =
-    detectRoom(title, category);
+  const room = detectRoom(title, category);
 
-  const finish =
-    detectFinish(title, collection);
+  const finish = detectFinish(title, collection);
 
-  const style =
-    detectStyle(title, collection);
+  const style = detectStyle(title, collection);
 
-  const variants =
-    raw.variants || [];
+  const variants = raw.variants || [];
 
-  const prices =
-    variants
-      .map(variant =>
-        Number(variant.price)
-      )
-      .filter(Number.isFinite);
+  const prices = variants
+    .map((variant) => Number(variant.price))
+    .filter(Number.isFinite);
 
-  const compares =
-    variants
-      .map(variant =>
-        Number(
-          variant.compare_at_price
-        )
-      )
-      .filter(Number.isFinite);
+  const compares = variants
+    .map((variant) => Number(variant.compare_at_price))
+    .filter(Number.isFinite);
 
-  const price =
-    prices.length
-      ? Math.min(...prices)
-      : 0;
+  const price = prices.length ? Math.min(...prices) : 0;
 
-  const compareAt =
-    compares.length
-      ? Math.max(...compares)
-      : null;
+  const compareAt = compares.length ? Math.max(...compares) : null;
 
-  const available =
-    variants.some(
-      variant =>
-        variant.available !== false
-    );
+  const available = variants.some((variant) => variant.available !== false);
 
-  const image =
-    chooseBestImage(
-      raw.images || [],
-      category,
-      title
-    ) ||
-    raw.image?.src ||
-    "";
+  const images = unique([
+    raw.image?.src || "",
+    ...(raw.images || []).map((image) => image?.src || ""),
+  ]).filter(Boolean);
+
+  const image = images[0] || "";
 
   return {
     id: String(raw.id),
     nameRaw: title,
-    name: cleanProductName(
-      title,
-      category,
-      condition
-    ),
+    name: cleanProductName(title, category, condition),
 
-    model:
-      (
-        title.match(
-          /^#?([A-Z]*\d+(?:\/\d+)?)/i
-        ) || [, ""]
-      )[1] || "",
+    model: (title.match(/^#?([A-Z]*\d+(?:\/\d+)?)/i) || [, ""])[1] || "",
 
     collection,
     room,
@@ -798,78 +803,57 @@ function normalizeProduct(raw) {
     price,
 
     compareAt:
-      Number.isFinite(compareAt) &&
-      compareAt > price
-        ? compareAt
-        : null,
+      Number.isFinite(compareAt) && compareAt > price ? compareAt : null,
 
     available,
 
-    quoteRequired:
-      requiresQuote(
-        title,
-        price
-      ),
+    quoteRequired: requiresQuote(title, price),
 
-    dimensions:
-      extractDimensions(title),
+    dimensions: extractDimensions(title),
 
     image,
+    images,
 
-    url:
-      raw.handle
-        ? `${STORE}/products/${raw.handle}`
-        : `${STORE}/collections/all`,
+    url: raw.handle
+      ? `${STORE}/products/${raw.handle}`
+      : `${STORE}/collections/all`,
 
     description:
-      stripHtml(
-        raw.body_html || ""
-      ) ||
+      stripHtml(raw.body_html || "") ||
       `${condition} ${category.toLowerCase()} from Desks Galore.`,
 
-    tags
+    tags,
   };
 }
 
 async function fetchCatalogPage(page) {
-  const response =
-    await fetch(
-      `${STORE}/products.json?limit=250&page=${page}`,
-      {
-        method: "GET",
-        mode: "cors",
-        credentials: "omit",
-        headers: {
-          Accept: "application/json"
-        }
-      }
-    );
+  const response = await fetch(
+    `${STORE}/products.json?limit=250&page=${page}`,
+    {
+      method: "GET",
+      mode: "cors",
+      credentials: "omit",
+      headers: {
+        Accept: "application/json",
+      },
+    },
+  );
 
   if (!response.ok) {
-    throw new Error(
-      `Catalog request failed (${response.status})`
-    );
+    throw new Error(`Catalog request failed (${response.status})`);
   }
 
-  const data =
-    await response.json();
+  const data = await response.json();
 
-  return Array.isArray(data.products)
-    ? data.products
-    : [];
+  return Array.isArray(data.products) ? data.products : [];
 }
 
 async function loadCatalog() {
   const collected = [];
 
   try {
-    for (
-      let page = 1;
-      page <= 12;
-      page += 1
-    ) {
-      const products =
-        await fetchCatalogPage(page);
+    for (let page = 1; page <= 12; page += 1) {
+      const products = await fetchCatalogPage(page);
 
       if (!products.length) {
         break;
@@ -883,78 +867,56 @@ async function loadCatalog() {
     }
 
     if (!collected.length) {
-      throw new Error(
-        "No products returned"
-      );
+      throw new Error("No products returned");
     }
 
     const deduped = [
       ...new Map(
-        collected.map(product => [
-          String(product.id),
-          product
-        ])
-      ).values()
+        collected.map((product) => [String(product.id), product]),
+      ).values(),
     ];
 
-    PRODUCTS =
-      deduped.map(normalizeProduct);
+    PRODUCTS = deduped.map(normalizeProduct);
 
     state.catalogSource = "live";
 
-    $("#catalogSourceLabel").textContent =
-      "loaded live from Desks Galore";
+    $("#catalogSourceLabel").textContent = "loaded live from Desks Galore";
 
-    $("#catalogSourceLabel").className =
-      "catalog-source-live";
+    $("#catalogSourceLabel").className = "catalog-source-live";
+
+    const availableCount = PRODUCTS.filter(
+      (product) => product.available !== false,
+    ).length;
 
     $("#catalogNote").innerHTML =
-      `<strong>Live catalog active:</strong> ${PRODUCTS.length.toLocaleString()} currently published products loaded from the public Desks Galore storefront and reorganized by our merchandising rules.`;
+      `<strong>Live inventory:</strong> ${availableCount.toLocaleString()} currently available products from Desks Galore.`;
   } catch (error) {
-    console.warn(
-      "Live catalog unavailable, using curated fallback.",
-      error
-    );
+    console.warn("Live catalog unavailable, using curated fallback.", error);
 
-    PRODUCTS =
-      FALLBACK_PRODUCTS.map(
-        product => ({
-          ...product,
-          nameRaw: product.name,
+    PRODUCTS = FALLBACK_PRODUCTS.map((product) => ({
+      ...product,
+      nameRaw: product.name,
 
-          quoteRequired:
-            requiresQuote(
-              product.name,
-              product.price
-            ),
+      quoteRequired: requiresQuote(product.name, product.price),
 
-          dimensions:
-            extractDimensions(
-              product.name
-            )
-        })
-      );
+      dimensions: extractDimensions(product.name),
+    }));
 
-    state.catalogSource =
-      "fallback";
+    state.catalogSource = "fallback";
 
     $("#catalogSourceLabel").textContent =
       "shown from the curated fallback set";
 
-    $("#catalogSourceLabel").className =
-      "catalog-source-fallback";
+    $("#catalogSourceLabel").className = "catalog-source-fallback";
 
     $("#catalogNote").innerHTML =
-      `<strong>Live catalog could not be reached from this local browser session.</strong> The curated real-product fallback is displayed instead.`;
+      `<strong>Live inventory is temporarily unavailable.</strong> A limited product selection is shown for this preview.`;
   } finally {
     state.catalogLoaded = true;
 
-    $("#catalogLoading")
-      .classList
-      .add("hidden");
+    $("#catalogLoading").classList.add("hidden");
 
-    $("#liveProductCount").textContent =
-      PRODUCTS.length.toLocaleString();
+    $("#liveProductCount").textContent = PRODUCTS.length.toLocaleString();
 
     buildFilters();
     renderHomeMerchandising();
@@ -965,152 +927,93 @@ async function loadCatalog() {
 }
 
 function buildFilters() {
-  const makeOptions =
-    (values, label) =>
-      `<option value="all">${label}</option>` +
-      values
-        .map(
-          value =>
-            `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`
-        )
-        .join("");
+  const availableProducts = PRODUCTS.filter(
+    (product) => product.available !== false,
+  );
 
-  $("#roomFilter").innerHTML =
-    makeOptions(
-      unique(
-        PRODUCTS.map(
-          product =>
-            product.room
-        )
+  const makeOptions = (values, label) =>
+    `<option value="all">${label}</option>` +
+    values
+      .map(
+        (value) =>
+          `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`,
       )
-        .filter(
-          value =>
-            value !== "Other"
-        )
-        .sort(),
+      .join("");
 
-      "All rooms"
-    );
+  $("#roomFilter").innerHTML = makeOptions(
+    unique(availableProducts.map((product) => product.room))
+      .filter((value) => value !== "Other")
+      .sort(),
 
-  $("#collectionFilter").innerHTML =
-    makeOptions(
-      unique(
-        PRODUCTS.map(
-          product =>
-            product.collection
-        )
-      )
-        .filter(
-          value =>
-            value !==
-            "Unassigned / Mix & Match"
-        )
-        .sort(),
+    "All rooms",
+  );
 
-      "All collections"
-    );
+  $("#collectionFilter").innerHTML = makeOptions(
+    unique(availableProducts.map((product) => product.collection))
+      .filter((value) => value !== "Unassigned / Mix & Match")
+      .sort(),
 
-  $("#categoryFilter").innerHTML =
-    makeOptions(
-      unique(
-        PRODUCTS.map(
-          product =>
-            product.category
-        )
-      )
-        .filter(
-          value =>
-            value !== "Other"
-        )
-        .sort(),
+    "All collections",
+  );
 
-      "All furniture types"
-    );
+  $("#categoryFilter").innerHTML = makeOptions(
+    unique(availableProducts.map((product) => product.category))
+      .filter((value) => value !== "Other")
+      .sort(),
 
-  $("#finishFilter").innerHTML =
-    makeOptions(
-      unique(
-        PRODUCTS.map(
-          product =>
-            product.finish
-        )
-      )
-        .filter(
-          value =>
-            value !==
-            "Mixed / Other"
-        )
-        .sort(),
+    "All furniture types",
+  );
 
-      "All finishes / families"
-    );
+  $("#finishFilter").innerHTML = makeOptions(
+    unique(availableProducts.map((product) => product.finish))
+      .filter((value) => value !== "Mixed / Other")
+      .sort(),
+
+    "All finishes / families",
+  );
 }
 
 function featuredScore(product) {
-  let score =
-    product.available === false
-      ? -220
-      : 95;
+  let score = product.available === false ? -220 : 95;
 
-  score +=
-    product.condition === "New"
-      ? 28
-      : -4;
+  score += product.condition === "New" ? 28 : -4;
 
-  if (
-    product.collection !==
-    "Unassigned / Mix & Match"
-  ) {
+  if (product.collection !== "Unassigned / Mix & Match") {
     score += 24;
   }
 
   const weights = {
     "Executive Desk": 34,
     "L-Shaped Desk": 32,
-    "Desk": 28,
+    Desk: 28,
     "Writing / Computer Desk": 27,
     "Adjustable Desk": 25,
     "Conference Table": 30,
     "Dining Table / Set": 28,
     "Credenza / Cabinet": 24,
-    "Bookcase": 22,
-    "Hutch": 20,
+    Bookcase: 22,
+    Hutch: 20,
     "File Cabinet": 19,
-    "Chair": 16,
+    Chair: 16,
     "Sofa / Recliner": 22,
     "Living Table": 18,
-    "Decor": 8
+    Decor: 8,
   };
 
-  score +=
-    weights[product.category] ||
-    0;
+  score += weights[product.category] || 0;
 
-  if (
-    state.quickFilter ===
-      "Office" &&
-    /Desk/.test(
-      product.category
-    )
-  ) {
+  if (state.quickFilter === "Office" && /Desk/.test(product.category)) {
     score += 28;
   }
 
   if (
-    state.quickFilter ===
-      "Conference" &&
-    product.category ===
-      "Conference Table"
+    state.quickFilter === "Conference" &&
+    product.category === "Conference Table"
   ) {
     score += 40;
   }
 
-  if (
-    state.quickFilter ===
-      "Used" &&
-    product.condition ===
-      "Used"
-  ) {
+  if (state.quickFilter === "Used" && product.condition === "Used") {
     score += 80;
   }
 
@@ -1119,12 +1022,9 @@ function featuredScore(product) {
 
 function conferenceShape(product) {
   const text =
-    `${product.nameRaw || product.name} ${product.name}`
-      .toLowerCase();
+    `${product.nameRaw || product.name} ${product.name}`.toLowerCase();
 
-  if (
-    /boat shape|boat[- ]?shape/.test(text)
-  ) {
+  if (/boat shape|boat[- ]?shape/.test(text)) {
     return "Boat Shape";
   }
 
@@ -1144,60 +1044,30 @@ function conferenceShape(product) {
 }
 
 function conferenceFeet(product) {
-  const text =
-    product.nameRaw ||
-    product.name;
+  const text = product.nameRaw || product.name;
 
-  const foot =
-    text.match(
-      /(\d+(?:\.\d+)?)\s*(?:'|’|ft)\b/i
-    );
+  const foot = text.match(/(\d+(?:\.\d+)?)\s*(?:'|’|ft)\b/i);
 
   if (foot) {
     return Number(foot[1]);
   }
 
-  const inch =
-    text.match(
-      /\b(72|96|120|144)\s*(?:["”]|in)\b/i
-    );
+  const inch = text.match(/\b(72|96|120|144)\s*(?:["”]|in)\b/i);
 
-  return inch
-    ? Math.round(
-        Number(inch[1]) / 12
-      )
-    : null;
+  return inch ? Math.round(Number(inch[1]) / 12) : null;
 }
 
 function conferenceVisibleProduct(product) {
-  return !new Set([
-    "7588",
-    "7997",
-    "6573",
-    "6574"
-  ]).has(
-    String(
-      product.model || ""
-    )
+  return !new Set(["7588", "7997", "6573", "6574"]).has(
+    String(product.model || ""),
   );
 }
 
 function conferenceScore(product) {
-  let score =
-    featuredScore(product);
+  let score = featuredScore(product);
 
   if (
-    [
-      "592",
-      "594",
-      "596",
-      "7585",
-      "536"
-    ].includes(
-      String(
-        product.model || ""
-      )
-    )
+    ["592", "594", "596", "7585", "536"].includes(String(product.model || ""))
   ) {
     score += 120;
   }
@@ -1206,10 +1076,7 @@ function conferenceScore(product) {
     score -= 25;
   }
 
-  if (
-    conferenceShape(product) !==
-    "Other"
-  ) {
+  if (conferenceShape(product) !== "Other") {
     score += 12;
   }
 
@@ -1217,26 +1084,14 @@ function conferenceScore(product) {
 }
 
 function conferenceRecommendedTables() {
-  return PRODUCTS
-    .filter(
-      product =>
-        (
-          product.category ===
-            "Conference Table" ||
-          product.room ===
-            "Conference"
-        ) &&
-        product.available !==
-          false &&
-        conferenceVisibleProduct(
-          product
-        )
-    )
-    .sort(
-      (a, b) =>
-        conferenceScore(b) -
-        conferenceScore(a)
-    )
+  return PRODUCTS.filter(
+    (product) =>
+      (product.category === "Conference Table" ||
+        product.room === "Conference") &&
+      product.available !== false &&
+      conferenceVisibleProduct(product),
+  )
+    .sort((a, b) => conferenceScore(b) - conferenceScore(a))
     .slice(0, 4);
 }
 
@@ -1247,358 +1102,195 @@ function conferenceRecommendedChairs() {
   const excluded =
     /\b(dining|bar\s*stool|barstool|counter\s*stool|hacienda|cabana|farmhouse|kitchen|patio|rocker|recliner)\b/i;
 
-  return PRODUCTS
-    .filter(
-      product =>
-        product.category ===
-          "Chair" &&
-        product.available !==
-          false &&
-        product.condition ===
-          "New"
-    )
-    .filter(product => {
-      const text =
-        `${product.nameRaw || product.name} ${product.collection || ""} ${product.room || ""}`;
+  return PRODUCTS.filter(
+    (product) =>
+      product.category === "Chair" &&
+      product.available !== false &&
+      product.condition === "New",
+  )
+    .filter((product) => {
+      const text = `${product.nameRaw || product.name} ${product.collection || ""} ${product.room || ""}`;
 
       return (
         !excluded.test(text) &&
-        (
-          product.room ===
-            "Office" ||
-          preferred.test(text)
-        )
+        (product.room === "Office" || preferred.test(text))
       );
     })
     .sort((a, b) => {
-      const score = product => {
-        const text =
-          (
-            product.nameRaw ||
-            product.name
-          ).toLowerCase();
+      const score = (product) => {
+        const text = (product.nameRaw || product.name).toLowerCase();
 
-        let value =
-          featuredScore(product);
+        let value = featuredScore(product);
 
-        if (
-          /conference|guest|reception/.test(text)
-        ) {
+        if (/conference|guest|reception/.test(text)) {
           value += 80;
         }
 
-        if (
-          /mesh|task/.test(text)
-        ) {
+        if (/mesh|task/.test(text)) {
           value += 62;
         }
 
-        if (
-          /executive|desk chair|office chair/.test(text)
-        ) {
+        if (/executive|desk chair|office chair/.test(text)) {
           value += 42;
         }
 
         return value;
       };
 
-      return (
-        score(b) -
-        score(a)
-      );
+      return score(b) - score(a);
     })
     .slice(0, 4);
 }
 
 function getFilteredProducts() {
-  let items =
-    PRODUCTS.filter(product => {
-      if (
-        state.quickFilter ===
-          "Office" &&
-        !(
-          product.room ===
-            "Office" ||
-          [
-            "Storage",
-            "Seating"
-          ].includes(
-            product.room
-          )
-        )
-      ) {
+  let items = PRODUCTS.filter((product) => {
+    if (product.available === false) {
+      return false;
+    }
+
+    if (
+      state.quickFilter === "Office" &&
+      !(
+        product.room === "Office" ||
+        ["Storage", "Seating"].includes(product.room)
+      )
+    ) {
+      return false;
+    }
+
+    if (
+      state.quickFilter === "Conference" &&
+      !(
+        product.room === "Conference" || product.category === "Conference Table"
+      )
+    ) {
+      return false;
+    }
+
+    if (state.quickFilter === "Living" && product.room !== "Living") {
+      return false;
+    }
+
+    if (state.quickFilter === "Dining" && product.room !== "Dining") {
+      return false;
+    }
+
+    if (state.quickFilter === "Storage" && product.room !== "Storage") {
+      return false;
+    }
+
+    if (state.quickFilter === "Seating" && product.category !== "Chair") {
+      return false;
+    }
+
+    if (state.quickFilter === "Used" && product.condition !== "Used") {
+      return false;
+    }
+
+    if (state.room !== "all" && product.room !== state.room) {
+      return false;
+    }
+
+    if (state.collection !== "all" && product.collection !== state.collection) {
+      return false;
+    }
+
+    if (state.category !== "all" && product.category !== state.category) {
+      return false;
+    }
+
+    if (state.finish !== "all" && product.finish !== state.finish) {
+      return false;
+    }
+
+    if (state.condition !== "all" && product.condition !== state.condition) {
+      return false;
+    }
+
+    if (state.quickFilter === "Conference") {
+      if (!conferenceVisibleProduct(product)) {
         return false;
       }
 
       if (
-        state.quickFilter ===
-          "Conference" &&
-        !(
-          product.room ===
-            "Conference" ||
-          product.category ===
-            "Conference Table"
-        )
+        state.conferenceShape !== "all" &&
+        conferenceShape(product) !== state.conferenceShape
       ) {
         return false;
       }
 
-      if (
-        state.quickFilter ===
-          "Living" &&
-        product.room !==
-          "Living"
-      ) {
-        return false;
-      }
+      const feet = conferenceFeet(product);
 
-      if (
-        state.quickFilter ===
-          "Dining" &&
-        product.room !==
-          "Dining"
-      ) {
-        return false;
-      }
-
-      if (
-        state.quickFilter ===
-          "Storage" &&
-        product.room !==
-          "Storage"
-      ) {
-        return false;
-      }
-
-      if (
-        state.quickFilter ===
-          "Seating" &&
-        product.category !==
-          "Chair"
-      ) {
-        return false;
-      }
-
-      if (
-        state.quickFilter ===
-          "Used" &&
-        product.condition !==
-          "Used"
-      ) {
-        return false;
-      }
-
-      if (
-        state.room !== "all" &&
-        product.room !==
-          state.room
-      ) {
-        return false;
-      }
-
-      if (
-        state.collection !==
-          "all" &&
-        product.collection !==
-          state.collection
-      ) {
-        return false;
-      }
-
-      if (
-        state.category !==
-          "all" &&
-        product.category !==
-          state.category
-      ) {
-        return false;
-      }
-
-      if (
-        state.finish !==
-          "all" &&
-        product.finish !==
-          state.finish
-      ) {
-        return false;
-      }
-
-      if (
-        state.condition !==
-          "all" &&
-        product.condition !==
-          state.condition
-      ) {
-        return false;
-      }
-
-      if (
-        state.quickFilter ===
-        "Conference"
-      ) {
-        if (
-          !conferenceVisibleProduct(
-            product
-          )
-        ) {
-          return false;
-        }
-
-        if (
-          state.conferenceShape !==
-            "all" &&
-          conferenceShape(
-            product
-          ) !==
-            state.conferenceShape
-        ) {
-          return false;
-        }
-
-        const feet =
-          conferenceFeet(product);
-
-        if (
-          state.conferenceSize !==
-          "all"
-        ) {
-          if (
-            state.conferenceSize ===
-            "custom"
-          ) {
-            if (
-              !product.quoteRequired &&
-              !(
-                feet &&
-                feet >= 12
-              )
-            ) {
-              return false;
-            }
-          } else if (
-            feet !==
-            Number(
-              state.conferenceSize
-            )
-          ) {
+      if (state.conferenceSize !== "all") {
+        if (state.conferenceSize === "custom") {
+          if (!product.quoteRequired && !(feet && feet >= 12)) {
             return false;
           }
-        }
-      }
-
-      if (state.search) {
-        const haystack =
-          `${product.name} ${product.nameRaw || ""} ${product.collection} ${product.finish} ${product.category} ${product.model}`
-            .toLowerCase();
-
-        if (
-          !haystack.includes(
-            state.search.toLowerCase()
-          )
-        ) {
+        } else if (feet !== Number(state.conferenceSize)) {
           return false;
         }
       }
+    }
 
-      return true;
-    });
+    if (state.search) {
+      const haystack =
+        `${product.name} ${product.nameRaw || ""} ${product.collection} ${product.finish} ${product.category} ${product.model}`.toLowerCase();
 
-  if (
-    state.sort ===
-    "price-low"
-  ) {
-    items.sort(
-      (a, b) =>
-        a.price - b.price
-    );
-  } else if (
-    state.sort ===
-    "price-high"
-  ) {
-    items.sort(
-      (a, b) =>
-        b.price - a.price
-    );
-  } else if (
-    state.sort === "name"
-  ) {
-    items.sort(
-      (a, b) =>
-        a.name.localeCompare(
-          b.name
-        )
-    );
-  } else if (
-    state.quickFilter ===
-    "Conference"
-  ) {
-    items.sort(
-      (a, b) =>
-        conferenceScore(b) -
-        conferenceScore(a)
-    );
+      if (!haystack.includes(state.search.toLowerCase())) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+
+  if (state.sort === "price-low") {
+    items.sort((a, b) => a.price - b.price);
+  } else if (state.sort === "price-high") {
+    items.sort((a, b) => b.price - a.price);
+  } else if (state.sort === "name") {
+    items.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (state.quickFilter === "Conference") {
+    items.sort((a, b) => conferenceScore(b) - conferenceScore(a));
   } else {
-    items.sort(
-      (a, b) =>
-        featuredScore(b) -
-        featuredScore(a)
-    );
+    items.sort((a, b) => featuredScore(b) - featuredScore(a));
   }
 
   return items;
 }
 
 function priceLabel(product) {
-  if (
-    product.quoteRequired
-  ) {
+  if (product.quoteRequired) {
     return `<span class="quote-price">Call for pricing</span>`;
   }
 
-  const sale =
-    product.compareAt &&
-    product.compareAt >
-      product.price;
+  const sale = product.compareAt && product.compareAt > product.price;
 
   return `${
-    sale
-      ? `<s>${money(
-          product.compareAt
-        )}</s>`
-      : ""
+    sale ? `<s>${money(product.compareAt)}</s>` : ""
   }${money(product.price)}`;
 }
 
 function productCard(product) {
   const sale =
     product.compareAt &&
-    product.compareAt >
-      product.price &&
+    product.compareAt > product.price &&
     !product.quoteRequired;
 
   const limited =
-    product.condition ===
-      "Used" &&
-    /\b1\s*only\b|\bone\s*only\b/i.test(
-      product.nameRaw || ""
-    );
+    product.condition === "Used" &&
+    /\b1\s*only\b|\bone\s*only\b/i.test(product.nameRaw || "");
 
   const specs = [
     product.dimensions,
 
-    product.model
-      ? `Model ${product.model}`
-      : ""
+    product.model ? `Model ${product.model}` : "",
   ].filter(Boolean);
 
   return `
     <article class="product-card ${product.available === false ? "out-of-stock-card" : ""}">
       <div class="product-card-media ${product.image ? "" : "image-missing"}">
-        <img
-          src="${escapeHtml(product.image)}"
-          alt="${escapeHtml(product.name)}"
-          loading="lazy"
-        >
+        ${productImageMarkup(product)}
 
         <div class="product-card-badges">
           ${
@@ -1613,17 +1305,9 @@ function productCard(product) {
               : ""
           }
 
-          ${
-            sale
-              ? `<span class="sale-badge">Sale</span>`
-              : ""
-          }
+          ${sale ? `<span class="sale-badge">Sale</span>` : ""}
 
-          ${
-            product.available === false
-              ? `<span>Out of stock</span>`
-              : ""
-          }
+          ${product.available === false ? `<span>Out of stock</span>` : ""}
 
           ${
             product.collection !== "Unassigned / Mix & Match"
@@ -1636,11 +1320,7 @@ function productCard(product) {
           class="quick-view-button ${product.quoteRequired ? "quote-button" : ""}"
           data-product-open="${escapeHtml(product.id)}"
         >
-          ${
-            product.quoteRequired
-              ? "View pricing details"
-              : "Quick view"
-          }
+          ${product.quoteRequired ? "View pricing details" : "Quick view"}
         </button>
       </div>
 
@@ -1657,10 +1337,7 @@ function productCard(product) {
             ? `
               <div class="product-card-specs">
                 ${specs
-                  .map(
-                    spec =>
-                      `<span>${escapeHtml(spec)}</span>`
-                  )
+                  .map((spec) => `<span>${escapeHtml(spec)}</span>`)
                   .join("")}
               </div>
             `
@@ -1676,8 +1353,7 @@ function productCard(product) {
           <span>${escapeHtml(product.style)}</span>
 
           ${
-            product.condition === "Used" &&
-            !limited
+            product.condition === "Used" && !limited
               ? `<span>Used inventory</span>`
               : ""
           }
@@ -1688,30 +1364,21 @@ function productCard(product) {
 }
 
 function renderConferenceMerchandising() {
-  const container =
-    $("#conferenceMerchandising");
+  const container = $("#conferenceMerchandising");
 
-  if (
-    state.quickFilter !==
-    "Conference"
-  ) {
-    container.classList.remove(
-      "visible"
-    );
+  if (state.quickFilter !== "Conference") {
+    container.classList.remove("visible");
 
     container.innerHTML = "";
 
     return;
   }
 
-  const tables =
-    conferenceRecommendedTables();
+  const tables = conferenceRecommendedTables();
 
-  const chairs =
-    conferenceRecommendedChairs();
+  const chairs = conferenceRecommendedChairs();
 
-  const miniCard =
-    (product, label) => `
+  const miniCard = (product, label) => `
       <button
         class="conference-mini-card"
         data-product-open="${escapeHtml(product.id)}"
@@ -1728,11 +1395,7 @@ function renderConferenceMerchandising() {
           <strong>${escapeHtml(product.name)}</strong>
 
           <small>
-            ${
-              product.quoteRequired
-                ? "Call for pricing"
-                : money(product.price)
-            }
+            ${product.quoteRequired ? "Call for pricing" : money(product.price)}
           </small>
         </span>
       </button>
@@ -1771,31 +1434,26 @@ function renderConferenceMerchandising() {
         </div>
 
         <div class="conference-shape-grid">
-          ${
+          ${[
             [
-              [
-                "all",
-                "All Conference Tables",
-                "Browse every conference-table shape"
-              ],
-              [
-                "Racetrack",
-                "Racetrack",
-                "Classic rounded meeting-table profile"
-              ],
-              [
-                "Rectangular",
-                "Rectangular",
-                "Clean commercial conference-room layout"
-              ],
-              [
-                "Boat Shape",
-                "Boat Shape",
-                "Large custom meeting and boardroom tables"
-              ]
-            ]
-              .map(
-                ([value, label, copy]) => `
+              "all",
+              "All Conference Tables",
+              "Browse every conference-table shape",
+            ],
+            ["Racetrack", "Racetrack", "Classic rounded meeting-table profile"],
+            [
+              "Rectangular",
+              "Rectangular",
+              "Clean commercial conference-room layout",
+            ],
+            [
+              "Boat Shape",
+              "Boat Shape",
+              "Large custom meeting and boardroom tables",
+            ],
+          ]
+            .map(
+              ([value, label, copy]) => `
                   <button
                     class="conference-shape-card ${state.conferenceShape === value ? "active" : ""}"
                     data-conference-shape="${value}"
@@ -1803,10 +1461,9 @@ function renderConferenceMerchandising() {
                     <strong>${label}</strong>
                     <span>${copy}</span>
                   </button>
-                `
-              )
-              .join("")
-          }
+                `,
+            )
+            .join("")}
         </div>
       </div>
 
@@ -1822,27 +1479,25 @@ function renderConferenceMerchandising() {
         </div>
 
         <div class="conference-size-row">
-          ${
-            [
-              ["all", "All sizes"],
-              ["6", "6'"],
-              ["8", "8'"],
-              ["10", "10'"],
-              ["12", "12'"],
-              ["custom", "12'–30' custom"]
-            ]
-              .map(
-                ([value, label]) => `
+          ${[
+            ["all", "All sizes"],
+            ["6", "6'"],
+            ["8", "8'"],
+            ["10", "10'"],
+            ["12", "12'"],
+            ["custom", "12'–30' custom"],
+          ]
+            .map(
+              ([value, label]) => `
                   <button
                     class="conference-size-button ${state.conferenceSize === value ? "active" : ""}"
                     data-conference-size="${value}"
                   >
                     ${label}
                   </button>
-                `
-              )
-              .join("")
-          }
+                `,
+            )
+            .join("")}
         </div>
       </div>
 
@@ -1865,20 +1520,16 @@ function renderConferenceMerchandising() {
             Any finish
           </button>
 
-          ${
-            CONFERENCE_FINISHES
-              .map(
-                finish => `
+          ${CONFERENCE_FINISHES.map(
+            (finish) => `
                   <button
                     class="conference-finish-button ${state.conferenceFinish === finish ? "active" : ""}"
                     data-conference-finish="${finish}"
                   >
                     ${finish}
                   </button>
-                `
-              )
-              .join("")
-          }
+                `,
+          ).join("")}
         </div>
 
         <p class="conference-finish-note">
@@ -1905,17 +1556,9 @@ function renderConferenceMerchandising() {
             </p>
 
             <div class="conference-mini-grid">
-              ${
-                tables
-                  .map(
-                    product =>
-                      miniCard(
-                        product,
-                        conferenceShape(product)
-                      )
-                  )
-                  .join("")
-              }
+              ${tables
+                .map((product) => miniCard(product, conferenceShape(product)))
+                .join("")}
             </div>
           </div>
 
@@ -1925,17 +1568,7 @@ function renderConferenceMerchandising() {
             </p>
 
             <div class="conference-mini-grid">
-              ${
-                chairs
-                  .map(
-                    product =>
-                      miniCard(
-                        product,
-                        "Seating"
-                      )
-                  )
-                  .join("")
-              }
+              ${chairs.map((product) => miniCard(product, "Seating")).join("")}
             </div>
           </div>
         </div>
@@ -1949,187 +1582,100 @@ function renderConferenceMerchandising() {
     </div>
   `;
 
-  container.classList.add(
-    "visible"
+  container.classList.add("visible");
+
+  $$("[data-conference-shape]", container).forEach((button) =>
+    button.addEventListener("click", () => {
+      state.conferenceShape = button.dataset.conferenceShape;
+
+      renderCatalog();
+    }),
   );
 
-  $$(
-    "[data-conference-shape]",
-    container
-  ).forEach(
-    button =>
-      button.addEventListener(
-        "click",
-        () => {
-          state.conferenceShape =
-            button.dataset.conferenceShape;
+  $$("[data-conference-size]", container).forEach((button) =>
+    button.addEventListener("click", () => {
+      state.conferenceSize = button.dataset.conferenceSize;
 
-          renderCatalog();
-        }
-      )
+      renderCatalog();
+    }),
   );
 
-  $$(
-    "[data-conference-size]",
-    container
-  ).forEach(
-    button =>
-      button.addEventListener(
-        "click",
-        () => {
-          state.conferenceSize =
-            button.dataset.conferenceSize;
+  $$("[data-conference-finish]", container).forEach((button) =>
+    button.addEventListener("click", () => {
+      state.conferenceFinish = button.dataset.conferenceFinish;
 
-          renderCatalog();
-        }
-      )
+      renderCatalog();
+    }),
   );
 
-  $$(
-    "[data-conference-finish]",
-    container
-  ).forEach(
-    button =>
-      button.addEventListener(
-        "click",
-        () => {
-          state.conferenceFinish =
-            button.dataset.conferenceFinish;
-
-          renderCatalog();
-        }
-      )
-  );
-
-  $$(
-    "[data-product-open]",
-    container
-  ).forEach(
-    button =>
-      button.addEventListener(
-        "click",
-        () =>
-          openProduct(
-            button.dataset.productOpen
-          )
-      )
+  $$("[data-product-open]", container).forEach((button) =>
+    button.addEventListener("click", () =>
+      openProduct(button.dataset.productOpen),
+    ),
   );
 }
 
 function renderMerchandisingClusters(items) {
-  const container =
-    $("#merchandisingClusters");
+  const container = $("#merchandisingClusters");
 
   if (
     state.quickFilter === "Conference" ||
     state.collection !== "all" ||
     state.search
   ) {
-    container.classList.remove(
-      "visible"
-    );
+    container.classList.remove("visible");
 
     container.innerHTML = "";
 
     return;
   }
 
-  const groups =
-    new Map();
+  const groups = new Map();
 
   items
     .filter(
-      product =>
+      (product) =>
         product.available !== false &&
-        product.collection !==
-          "Unassigned / Mix & Match"
+        product.collection !== "Unassigned / Mix & Match",
     )
-    .forEach(product => {
-      if (
-        !groups.has(
-          product.collection
-        )
-      ) {
-        groups.set(
-          product.collection,
-          []
-        );
+    .forEach((product) => {
+      if (!groups.has(product.collection)) {
+        groups.set(product.collection, []);
       }
 
-      groups
-        .get(product.collection)
-        .push(product);
+      groups.get(product.collection).push(product);
     });
 
-  const clusters =
-    [...groups.entries()]
-      .filter(
-        ([, products]) =>
-          products.length >= 2
-      )
-      .map(
-        ([name, products]) => {
-          const categories =
-            unique(
-              products.map(
-                product =>
-                  product.category
-              )
-            );
+  const clusters = [...groups.entries()]
+    .filter(([, products]) => products.length >= 2)
+    .map(([name, products]) => {
+      const categories = unique(products.map((product) => product.category));
 
-          const hasDesk =
-            products.some(
-              product =>
-                /Desk/.test(
-                  product.category
-                )
-            );
+      const hasDesk = products.some((product) => /Desk/.test(product.category));
 
-          const hasStorage =
-            products.some(
-              product =>
-                [
-                  "Credenza / Cabinet",
-                  "Bookcase",
-                  "File Cabinet",
-                  "Hutch"
-                ].includes(
-                  product.category
-                )
-            );
+      const hasStorage = products.some((product) =>
+        ["Credenza / Cabinet", "Bookcase", "File Cabinet", "Hutch"].includes(
+          product.category,
+        ),
+      );
 
-          return {
-            name,
-            products,
-            categories,
+      return {
+        name,
+        products,
+        categories,
 
-            score:
-              (
-                COLLECTION_PRIORITY[
-                  name
-                ] || 0
-              ) +
-              products.length * 4 +
-              categories.length * 4 +
-              (
-                hasDesk &&
-                hasStorage
-                  ? 45
-                  : 0
-              )
-          };
-        }
-      )
-      .sort(
-        (a, b) =>
-          b.score - a.score
-      )
-      .slice(0, 4);
+        score:
+          (COLLECTION_PRIORITY[name] || 0) +
+          products.length * 4 +
+          categories.length * 4 +
+          (hasDesk && hasStorage ? 45 : 0),
+      };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 4);
 
   if (!clusters.length) {
-    container.classList.remove(
-      "visible"
-    );
+    container.classList.remove("visible");
 
     container.innerHTML = "";
 
@@ -2149,24 +1695,18 @@ function renderMerchandisingClusters(items) {
     </div>
 
     <div class="collection-cluster-grid">
-      ${
-        clusters
-          .map(cluster => {
-            const hero =
-              [...cluster.products]
-                .sort(
-                  (a, b) =>
-                    featuredScore(b) -
-                    featuredScore(a)
-                )[0];
+      ${clusters
+        .map((cluster) => {
+          const hero = [...cluster.products].sort(
+            (a, b) => featuredScore(b) - featuredScore(a),
+          )[0];
 
-            const title =
-              state.quickFilter ===
-              "Office"
-                ? `Build the ${cluster.name} Office`
-                : cluster.name;
+          const title =
+            state.quickFilter === "Office"
+              ? `Build the ${cluster.name} Office`
+              : cluster.name;
 
-            return `
+          return `
               <button
                 class="collection-cluster-card"
                 data-cluster="${escapeHtml(cluster.name)}"
@@ -2188,79 +1728,52 @@ function renderMerchandisingClusters(items) {
 
                   <small>
                     ${cluster.products.length} matching pieces ·
-                    ${escapeHtml(
-                      cluster.categories
-                        .slice(0, 4)
-                        .join(" · ")
-                    )}
+                    ${escapeHtml(cluster.categories.slice(0, 4).join(" · "))}
                   </small>
                 </span>
               </button>
             `;
-          })
-          .join("")
-      }
+        })
+        .join("")}
     </div>
   `;
 
-  container.classList.add(
-    "visible"
-  );
+  container.classList.add("visible");
 
-  $$(
-    "[data-cluster]",
-    container
-  ).forEach(
-    button =>
-      button.addEventListener(
-        "click",
-        () => {
-          state.collection =
-            button.dataset.cluster;
+  $$("[data-cluster]", container).forEach((button) =>
+    button.addEventListener("click", () => {
+      state.collection = button.dataset.cluster;
 
-          $("#collectionFilter").value =
-            state.collection;
+      $("#collectionFilter").value = state.collection;
 
-          renderCatalog();
-        }
-      )
+      renderCatalog();
+    }),
   );
 }
 
 function catalogSignature() {
   return JSON.stringify({
-    quickFilter:
-      state.quickFilter,
+    quickFilter: state.quickFilter,
 
-    room:
-      state.room,
+    room: state.room,
 
-    collection:
-      state.collection,
+    collection: state.collection,
 
-    category:
-      state.category,
+    category: state.category,
 
-    finish:
-      state.finish,
+    finish: state.finish,
 
-    condition:
-      state.condition,
+    condition: state.condition,
 
-    conferenceShape:
-      state.conferenceShape,
+    conferenceShape: state.conferenceShape,
 
-    conferenceSize:
-      state.conferenceSize,
+    conferenceSize: state.conferenceSize,
 
-    conferenceFinish:
-      state.conferenceFinish,
+    conferenceFinish: state.conferenceFinish,
 
-    search:
-      state.search,
+    search: state.search,
 
-    sort:
-      state.sort
+    sort: state.sort,
   });
 }
 
@@ -2269,40 +1782,26 @@ function renderCatalog() {
     return;
   }
 
-  const signature =
-    catalogSignature();
+  const signature = catalogSignature();
 
-  if (
-    signature !==
-    state.lastCatalogSignature
-  ) {
+  if (signature !== state.lastCatalogSignature) {
     state.catalogLimit = 48;
 
-    state.lastCatalogSignature =
-      signature;
+    state.lastCatalogSignature = signature;
   }
 
-  const items =
-    getFilteredProducts();
+  const items = getFilteredProducts();
 
-  const visible =
-    items.slice(
-      0,
-      state.catalogLimit
-    );
+  const visible = items.slice(0, state.catalogLimit);
 
-  $("#catalogCount").textContent =
-    items.length.toLocaleString();
+  $("#catalogCount").textContent = items.length.toLocaleString();
 
   renderConferenceMerchandising();
   renderMerchandisingClusters(items);
 
-  $("#productGrid").innerHTML =
-    visible.length
-      ? visible
-          .map(productCard)
-          .join("")
-      : `
+  $("#productGrid").innerHTML = visible.length
+    ? visible.map(productCard).join("")
+    : `
         <div
           class="prototype-note"
           style="grid-column:1/-1"
@@ -2312,28 +1811,15 @@ function renderCatalog() {
         </div>
       `;
 
-  $$(
-    "[data-product-open]",
-    $("#productGrid")
-  ).forEach(
-    button =>
-      button.addEventListener(
-        "click",
-        () =>
-          openProduct(
-            button.dataset.productOpen
-          )
-      )
+  $$("[data-product-open]", $("#productGrid")).forEach((button) =>
+    button.addEventListener("click", () =>
+      openProduct(button.dataset.productOpen),
+    ),
   );
 
-  const pagination =
-    $("#catalogPagination");
+  const pagination = $("#catalogPagination");
 
-  if (
-    !items.length ||
-    visible.length >=
-      items.length
-  ) {
+  if (!items.length || visible.length >= items.length) {
     pagination.hidden = true;
   } else {
     pagination.hidden = false;
@@ -2341,50 +1827,33 @@ function renderCatalog() {
     $("#catalogShowing").textContent =
       `Showing ${visible.length.toLocaleString()} of ${items.length.toLocaleString()} products`;
 
-    $("#loadMoreProducts").textContent =
-      `Load ${Math.min(
-        48,
-        items.length -
-          visible.length
-      )} more`;
+    $("#loadMoreProducts").textContent = `Load ${Math.min(
+      48,
+      items.length - visible.length,
+    )} more`;
   }
 }
 
 function renderHomeMerchandising() {
-  const ash =
-    PRODUCTS
-      .filter(
-        product =>
-          product.collection ===
-            "Ash Gray" &&
-          product.available !==
-            false
-      )
-      .sort(
-        (a, b) =>
-          featuredScore(b) -
-          featuredScore(a)
-      )
-      .slice(0, 3);
-
-  const ashFallback =
-    FALLBACK_PRODUCTS
-      .filter(
-        product =>
-          product.collection ===
-          "Ash Gray"
-      )
-      .slice(0, 3);
+  const ash = PRODUCTS.filter(
+    (product) =>
+      product.collection === "Ash Gray" && product.available !== false,
+  )
+    .sort((a, b) => featuredScore(b) - featuredScore(a))
+    .slice(0, 3);
 
   const ashItems =
-    ash.length >= 3
-      ? ash
-      : ashFallback;
+    state.catalogSource === "fallback"
+      ? FALLBACK_PRODUCTS.filter(
+          (product) =>
+            product.collection === "Ash Gray" &&
+            product.available !== false,
+        ).slice(0, 3)
+      : ash;
 
-  $("#ashBundleProducts").innerHTML =
-    ashItems
-      .map(
-        product => `
+  $("#ashBundleProducts").innerHTML = ashItems
+    .map(
+      (product) => `
           <article class="bundle-product">
             <img
               src="${escapeHtml(product.image)}"
@@ -2405,55 +1874,38 @@ function renderHomeMerchandising() {
               </b>
             </div>
           </article>
-        `
-      )
-      .join("");
+        `,
+    )
+    .join("");
 
-  const total =
-    ashItems.reduce(
-      (sum, product) =>
-        sum +
-        Number(
-          product.price || 0
-        ),
-      0
-    );
+  const total = ashItems.reduce(
+    (sum, product) => sum + Number(product.price || 0),
+    0,
+  );
 
   if (total) {
-    $("#ashBundleTotal").textContent =
-      money(total);
+    $("#ashBundleTotal").textContent = money(total);
   }
 
-  const coffee =
-    PRODUCTS
-      .filter(
-        product =>
-          product.collection ===
-            "Coffee" &&
-          product.available !==
-            false
-      )
-      .sort(
-        (a, b) =>
-          featuredScore(b) -
-          featuredScore(a)
-      )
-      .slice(0, 4);
+  const coffee = PRODUCTS.filter(
+    (product) => product.collection === "Coffee" && product.available !== false,
+  )
+    .sort((a, b) => featuredScore(b) - featuredScore(a))
+    .slice(0, 4);
 
   const coffeeItems =
-    coffee.length
-      ? coffee
-      : FALLBACK_PRODUCTS.filter(
-          product =>
-            product.collection ===
-            "Coffee"
-        );
+    state.catalogSource === "fallback"
+      ? FALLBACK_PRODUCTS.filter(
+          (product) =>
+            product.collection === "Coffee" &&
+            product.available !== false,
+        )
+      : coffee;
 
-  $("#coffeeShowcase").innerHTML =
-    coffeeItems
-      .slice(0, 4)
-      .map(
-        product => `
+  $("#coffeeShowcase").innerHTML = coffeeItems
+    .slice(0, 4)
+    .map(
+      (product) => `
           <article class="dark-product-card">
             <img
               src="${escapeHtml(product.image)}"
@@ -2483,40 +1935,32 @@ function renderHomeMerchandising() {
               </button>
             </div>
           </article>
-        `
-      )
-      .join("");
+        `,
+    )
+    .join("");
 
-  $$(
-    "[data-product-open]",
-    $("#coffeeShowcase")
-  ).forEach(
-    button =>
-      button.addEventListener(
-        "click",
-        () =>
-          openProduct(
-            button.dataset.productOpen
-          )
-      )
+  $$("[data-product-open]", $("#coffeeShowcase")).forEach((button) =>
+    button.addEventListener("click", () =>
+      openProduct(button.dataset.productOpen),
+    ),
   );
 }
 
 function renderCollectionsPage() {
-  const container =
-    $("#collectionPageGrid");
+  const container = $("#collectionPageGrid");
 
-  container.innerHTML =
-    FEATURED_COLLECTIONS
-      .map(collection => {
-        const count =
-          PRODUCTS.filter(
-            product =>
-              product.collection ===
-              collection.name
-          ).length;
+  container.innerHTML = FEATURED_COLLECTIONS.map((collection) => {
+    const count = PRODUCTS.filter(
+      (product) =>
+        product.collection === collection.name &&
+        product.available !== false,
+    ).length;
 
-        return `
+    if (!count) {
+      return "";
+    }
+
+    return `
           <article class="collection-page-card">
             <div class="collection-page-card-image">
               <img
@@ -2527,9 +1971,7 @@ function renderCollectionsPage() {
 
             <div class="collection-page-card-body">
               <span class="micro-label">
-                ${escapeHtml(
-                  collection.label.toUpperCase()
-                )}
+                ${escapeHtml(collection.label.toUpperCase())}
               </span>
 
               <h3>
@@ -2541,20 +1983,11 @@ function renderCollectionsPage() {
               </p>
 
               <div class="collection-meta">
-                ${
-                  collection.tags
-                    .map(
-                      tag =>
-                        `<span>${escapeHtml(tag)}</span>`
-                    )
-                    .join("")
-                }
+                ${collection.tags
+                  .map((tag) => `<span>${escapeHtml(tag)}</span>`)
+                  .join("")}
 
-                ${
-                  count
-                    ? `<span>${count} live pieces</span>`
-                    : ""
-                }
+                ${count ? `<span>${count} live pieces</span>` : ""}
               </div>
 
               <button
@@ -2566,271 +1999,278 @@ function renderCollectionsPage() {
             </div>
           </article>
         `;
-      })
-      .join("");
+  }).join("");
 
-  bindCollectionButtons(
-    container
-  );
+  bindCollectionButtons(container);
 }
 
 function getRelatedProducts(product) {
-  return PRODUCTS
-    .filter(
-      candidate =>
-        candidate.id !==
-          product.id &&
-        candidate.available !==
-          false
-    )
-    .map(candidate => {
+  return PRODUCTS.filter(
+    (candidate) =>
+      String(candidate.id) !== String(product.id) &&
+      candidate.available !== false,
+  )
+    .map((candidate) => {
       let score = 0;
 
       if (
-        candidate.collection ===
-          product.collection &&
-        product.collection !==
-          "Unassigned / Mix & Match"
+        candidate.collection === product.collection &&
+        product.collection !== "Unassigned / Mix & Match"
       ) {
-        score += 10;
+        score += 14;
       }
 
       if (
-        candidate.finish ===
-        product.finish
+        candidate.finish === product.finish &&
+        product.finish !== "Mixed / Other"
       ) {
-        score += 5;
+        score += 8;
       }
 
-      if (
-        candidate.room ===
-        product.room
-      ) {
+      if (candidate.room === product.room) {
+        score += 4;
+      }
+
+      if (candidate.style === product.style) {
         score += 3;
       }
 
-      if (
-        candidate.style ===
-        product.style
-      ) {
-        score += 2;
+      if (candidate.category !== product.category) {
+        score += 4;
+      } else {
+        score -= 2;
       }
 
-      if (
-        candidate.category !==
-        product.category
-      ) {
-        score += 3;
+      if (candidate.condition === product.condition) {
+        score += 1;
       }
 
-      return {
-        candidate,
-        score
-      };
+      return { candidate, score };
     })
-    .filter(
-      item =>
-        item.score >= 5
-    )
-    .sort(
-      (a, b) =>
-        b.score - a.score
-    )
-    .slice(0, 5)
-    .map(
-      item =>
-        item.candidate
-    );
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 6)
+    .map((item) => item.candidate);
 }
 
-function openProduct(id) {
-  const product =
-    PRODUCTS.find(
-      product =>
-        String(product.id) ===
-        String(id)
-    ) ||
-    FALLBACK_PRODUCTS.find(
-      product =>
-        String(product.id) ===
-        String(id)
-    );
+function renderProductGallery(product) {
+  const container = $(".product-modal-image");
+  const images = productImages(product);
 
-  if (!product) {
+  if (!images.length) {
+    container.innerHTML = productPlaceholderMarkup(product);
     return;
   }
 
-  state.currentProduct =
-    product;
+  const mainProduct = {
+    ...product,
+    image: images[0],
+  };
 
-  $("#productModalImage").src =
-    product.image || "";
+  container.innerHTML = `
+    <div class="product-gallery-main">
+      ${productImageMarkup(mainProduct, "eager", true)}
+    </div>
 
-  $("#productModalImage").alt =
-    product.name;
+    ${
+      images.length > 1
+        ? `
+          <div
+            class="product-gallery-thumbnails"
+            aria-label="Product photos"
+          >
+            ${images
+              .map(
+                (src, index) => `
+                  <button
+                    class="product-gallery-thumb ${index === 0 ? "active" : ""}"
+                    type="button"
+                    data-gallery-image="${escapeHtml(src)}"
+                    aria-label="View product photo ${index + 1}"
+                  >
+                    <img
+                      src="${escapeHtml(src)}"
+                      alt=""
+                      loading="lazy"
+                    >
+                  </button>
+                `,
+              )
+              .join("")}
+          </div>
+        `
+        : ""
+    }
+  `;
 
-  $("#productModalCollection").textContent =
-    product.collection !==
-      "Unassigned / Mix & Match"
-      ? product.collection
-      : product.category;
+  $$("[data-gallery-image]", container).forEach((button) =>
+    button.addEventListener("click", () => {
+      const selected = {
+        ...product,
+        image: button.dataset.galleryImage,
+      };
 
-  $("#productModalTitle").textContent =
-    product.name;
+      $(".product-gallery-main").innerHTML = productImageMarkup(
+        selected,
+        "eager",
+        true,
+      );
 
-  $("#productModalSubtitle").textContent =
-    [
-      product.dimensions,
-      product.category
-    ]
-      .filter(Boolean)
-      .join(" · ");
+      $$(".product-gallery-thumb", container).forEach((thumb) =>
+        thumb.classList.toggle("active", thumb === button),
+      );
+    }),
+  );
+}
 
-  $("#productModalPrice").innerHTML =
-    priceLabel(product);
+function renderRelatedProducts(product) {
+  const related = getRelatedProducts(product);
 
-  $("#productModalDescription").textContent =
-    product.description ||
-    "Furniture from Desks Galore.";
+  $("#productModalPairs").innerHTML = related.length
+    ? `
+        <div class="recommendation-grid">
+          ${related
+            .map(
+              (item) => `
+                <button
+                  class="pair-card"
+                  type="button"
+                  data-product-open="${escapeHtml(item.id)}"
+                >
+                  <span class="pair-card-image">
+                    ${productImageMarkup(item)}
+                  </span>
 
-  $("#productModalModel").textContent =
-    product.model ||
-    "See listing";
+                  <span class="pair-card-body">
+                    <small>
+                      ${escapeHtml(item.category)}
+                    </small>
 
-  $("#productModalFinish").textContent =
-    product.finish;
+                    <strong>
+                      ${escapeHtml(item.name)}
+                    </strong>
 
-  $("#productModalRoom").textContent =
-    product.room;
-
-  $("#productModalCondition").textContent =
-    product.condition;
-
-  $("#modalOriginalLink").href =
-    product.url ||
-    STORE;
-
-  const addButton =
-    $("#modalAddToCart");
-
-  if (product.quoteRequired) {
-    addButton.textContent =
-      "Call showroom for pricing";
-
-    addButton.dataset.mode =
-      "call";
-  } else if (
-    product.available === false
-  ) {
-    addButton.textContent =
-      "Currently out of stock";
-
-    addButton.dataset.mode =
-      "disabled";
-  } else {
-    addButton.textContent =
-      "Add to cart";
-
-    addButton.dataset.mode =
-      "cart";
-  }
-
-  const related =
-    getRelatedProducts(
-      product
-    );
-
-  $("#productModalPairs").innerHTML =
-    related.length
-      ? related
-          .map(
-            item => `
-              <button
-                class="pair-button"
-                data-product-open="${escapeHtml(item.id)}"
-              >
-                ${escapeHtml(item.name)}
-              </button>
-            `
-          )
-          .join("")
-      : `
-        <span
-          style="color:var(--muted);font-size:.75rem"
-        >
+                    <b>
+                      ${
+                        item.quoteRequired
+                          ? "Call for pricing"
+                          : money(item.price)
+                      }
+                    </b>
+                  </span>
+                </button>
+              `,
+            )
+            .join("")}
+        </div>
+      `
+    : `
+        <span class="pair-empty">
           Ask the showroom about matching pieces.
         </span>
       `;
 
-  $$(
-    "[data-product-open]",
-    $("#productModalPairs")
-  ).forEach(
-    button =>
-      button.addEventListener(
-        "click",
-        () =>
-          openProduct(
-            button.dataset.productOpen
-          )
-      )
-  );
-
-  $("#productModal")
-    .classList
-    .add("open");
-
-  $("#productModal")
-    .setAttribute(
-      "aria-hidden",
-      "false"
-    );
-
-  document.body
-    .classList
-    .add("no-scroll");
-}
-
-function closeProduct() {
-  $("#productModal")
-    .classList
-    .remove("open");
-
-  $("#productModal")
-    .setAttribute(
-      "aria-hidden",
-      "true"
-    );
-
-  document.body
-    .classList
-    .remove("no-scroll");
-}
-
-function saveCart() {
-  localStorage.setItem(
-    "dg-v6-cart",
-    JSON.stringify(
-      state.cart
-    )
+  $$("[data-product-open]", $("#productModalPairs")).forEach((button) =>
+    button.addEventListener("click", () =>
+      openProduct(button.dataset.productOpen),
+    ),
   );
 }
 
-function addToCart(product) {
-  if (
-    !product ||
-    product.quoteRequired ||
-    product.available === false
-  ) {
+function openProduct(id) {
+  const product =
+    PRODUCTS.find((product) => String(product.id) === String(id)) ||
+    (state.catalogSource === "fallback"
+      ? FALLBACK_PRODUCTS.find((product) => String(product.id) === String(id))
+      : null);
+
+  if (!product || product.available === false) {
     return;
   }
 
-  const existing =
-    state.cart.find(
-      item =>
-        String(item.id) ===
-        String(product.id)
-    );
+  state.currentProduct = product;
+
+  renderProductGallery(product);
+
+  $("#productModalCollection").textContent =
+    product.collection !== "Unassigned / Mix & Match"
+      ? product.collection
+      : product.category;
+
+  $("#productModalTitle").textContent = product.name;
+
+  $("#productModalSubtitle").textContent = [
+    product.dimensions,
+    product.category,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
+  $("#productModalPrice").innerHTML = priceLabel(product);
+
+  $("#productModalDescription").textContent =
+    product.description || "Furniture from Desks Galore.";
+
+  $("#productModalModel").textContent = product.model || "See listing";
+
+  $("#productModalFinish").textContent = product.finish;
+
+  $("#productModalRoom").textContent = product.room;
+
+  $("#productModalCondition").textContent = product.condition;
+
+  $("#modalOriginalLink").href = product.url || STORE;
+
+  const addButton = $("#modalAddToCart");
+
+  if (product.quoteRequired) {
+    addButton.textContent = "Call showroom for pricing";
+
+    addButton.dataset.mode = "call";
+  } else {
+    addButton.textContent = "Add to cart";
+
+    addButton.dataset.mode = "cart";
+  }
+
+  const pairsPanel = $(".pairs-panel");
+
+  const dialog = $(".product-modal-dialog");
+
+  if (pairsPanel.parentElement !== dialog) {
+    dialog.appendChild(pairsPanel);
+  }
+
+  renderRelatedProducts(product);
+
+  $("#productModal").classList.add("open");
+
+  $("#productModal").setAttribute("aria-hidden", "false");
+
+  dialog.scrollTop = 0;
+
+  document.body.classList.add("no-scroll");
+}
+
+function closeProduct() {
+  $("#productModal").classList.remove("open");
+
+  $("#productModal").setAttribute("aria-hidden", "true");
+
+  document.body.classList.remove("no-scroll");
+}
+
+function saveCart() {
+  localStorage.setItem("dg-v6-cart", JSON.stringify(state.cart));
+}
+
+function addToCart(product) {
+  if (!product || product.quoteRequired || product.available === false) {
+    return;
+  }
+
+  const existing = state.cart.find(
+    (item) => String(item.id) === String(product.id),
+  );
 
   if (existing) {
     existing.qty += 1;
@@ -2840,46 +2280,53 @@ function addToCart(product) {
       name: product.name,
       price: product.price,
       image: product.image,
-      qty: 1
+      qty: 1,
     });
   }
 
   saveCart();
   renderCart();
 
-  toast(
-    `${product.name} added to cart`
-  );
+  toast(`${product.name} added to cart`);
 }
 
 function renderCart() {
-  const count =
-    state.cart.reduce(
-      (sum, item) =>
-        sum + item.qty,
-      0
+  const count = state.cart.reduce((sum, item) => sum + item.qty, 0);
+
+  const total = state.cart.reduce(
+    (sum, item) => sum + item.price * item.qty,
+    0,
+  );
+
+  $("#cartCount").textContent = count;
+
+  $("#cartTotal").textContent = money(total);
+
+  let taxRow = $("#cartTaxRow");
+
+  if (!taxRow) {
+    $(".cart-total-row").insertAdjacentHTML(
+      "afterend",
+      `
+          <div
+            class="cart-tax-row"
+            id="cartTaxRow"
+          >
+            <span>Sales tax</span>
+            <strong>Calculated at Shopify checkout</strong>
+          </div>
+        `,
     );
 
-  const total =
-    state.cart.reduce(
-      (sum, item) =>
-        sum +
-        item.price *
-          item.qty,
-      0
-    );
+    taxRow = $("#cartTaxRow");
+  }
 
-  $("#cartCount").textContent =
-    count;
+  taxRow.hidden = !state.cart.length;
 
-  $("#cartTotal").textContent =
-    money(total);
-
-  $("#cartItems").innerHTML =
-    state.cart.length
-      ? state.cart
-          .map(
-            item => `
+  $("#cartItems").innerHTML = state.cart.length
+    ? state.cart
+        .map(
+          (item) => `
               <article class="cart-item">
                 <img
                   src="${escapeHtml(item.image)}"
@@ -2898,10 +2345,7 @@ function renderCart() {
 
                 <div class="cart-item-right">
                   <b>
-                    ${money(
-                      item.price *
-                      item.qty
-                    )}
+                    ${money(item.price * item.qty)}
                   </b>
 
                   <button
@@ -2911,10 +2355,10 @@ function renderCart() {
                   </button>
                 </div>
               </article>
-            `
-          )
-          .join("")
-      : `
+            `,
+        )
+        .join("")
+    : `
         <div class="cart-empty">
           <strong>
             Your cart is empty.
@@ -2926,85 +2370,44 @@ function renderCart() {
         </div>
       `;
 
-  $$(
-    "[data-remove-cart]",
-    $("#cartItems")
-  ).forEach(
-    button =>
-      button.addEventListener(
-        "click",
-        () => {
-          state.cart =
-            state.cart.filter(
-              item =>
-                String(item.id) !==
-                String(
-                  button.dataset.removeCart
-                )
-            );
+  $$("[data-remove-cart]", $("#cartItems")).forEach((button) =>
+    button.addEventListener("click", () => {
+      state.cart = state.cart.filter(
+        (item) => String(item.id) !== String(button.dataset.removeCart),
+      );
 
-          saveCart();
-          renderCart();
-        }
-      )
+      saveCart();
+      renderCart();
+    }),
   );
 }
 
 function openCart() {
-  $("#cartDrawer")
-    .classList
-    .add("open");
+  $("#cartDrawer").classList.add("open");
 
-  $("#cartDrawer")
-    .setAttribute(
-      "aria-hidden",
-      "false"
-    );
+  $("#cartDrawer").setAttribute("aria-hidden", "false");
 
-  document.body
-    .classList
-    .add("no-scroll");
+  document.body.classList.add("no-scroll");
 }
 
 function closeCart() {
-  $("#cartDrawer")
-    .classList
-    .remove("open");
+  $("#cartDrawer").classList.remove("open");
 
-  $("#cartDrawer")
-    .setAttribute(
-      "aria-hidden",
-      "true"
-    );
+  $("#cartDrawer").setAttribute("aria-hidden", "true");
 
-  document.body
-    .classList
-    .remove("no-scroll");
+  document.body.classList.remove("no-scroll");
 }
 
 function toast(message) {
-  const element =
-    $("#toast");
+  const element = $("#toast");
 
-  element.textContent =
-    message;
+  element.textContent = message;
 
-  element.classList.add(
-    "show"
-  );
+  element.classList.add("show");
 
-  clearTimeout(
-    toast.timer
-  );
+  clearTimeout(toast.timer);
 
-  toast.timer =
-    setTimeout(
-      () =>
-        element.classList.remove(
-          "show"
-        ),
-      1800
-    );
+  toast.timer = setTimeout(() => element.classList.remove("show"), 1800);
 }
 
 function resetCatalogFilters() {
@@ -3020,109 +2423,55 @@ function resetCatalogFilters() {
   state.search = "";
   state.sort = "featured";
 
-  $$(".filter-chip").forEach(
-    chip =>
-      chip.classList.toggle(
-        "active",
-        chip.dataset.filter ===
-          "all"
-      )
+  $$(".filter-chip").forEach((chip) =>
+    chip.classList.toggle("active", chip.dataset.filter === "all"),
   );
 
-  $("#roomFilter").value =
-    "all";
+  $("#roomFilter").value = "all";
 
-  $("#collectionFilter").value =
-    "all";
+  $("#collectionFilter").value = "all";
 
-  $("#categoryFilter").value =
-    "all";
+  $("#categoryFilter").value = "all";
 
-  $("#finishFilter").value =
-    "all";
+  $("#finishFilter").value = "all";
 
-  $("#conditionFilter").value =
-    "all";
+  $("#conditionFilter").value = "all";
 
-  $("#catalogSearch").value =
-    "";
+  $("#catalogSearch").value = "";
 
-  $("#catalogSort").value =
-    "featured";
+  $("#catalogSort").value = "featured";
 
   renderCatalog();
 }
 
-function setRoute(
-  route,
-  pushHash = true
-) {
-  const valid = [
-    "home",
-    "collections",
-    "shop",
-    "used",
-    "about",
-    "contact"
-  ];
+function setRoute(route, pushHash = true) {
+  const valid = ["home", "collections", "shop", "used", "about", "contact"];
 
-  const next =
-    valid.includes(route)
-      ? route
-      : "home";
+  const next = valid.includes(route) ? route : "home";
 
-  state.route =
-    next;
+  state.route = next;
 
-  $$(".page").forEach(
-    page =>
-      page.classList.toggle(
-        "active",
-        page.dataset.page ===
-          next
-      )
+  $$(".page").forEach((page) =>
+    page.classList.toggle("active", page.dataset.page === next),
   );
 
-  $$(
-    "[data-route-link]"
-  ).forEach(
-    link =>
-      link.classList.toggle(
-        "active",
-        link.dataset.routeLink ===
-          next
-      )
+  $$("[data-route-link]").forEach((link) =>
+    link.classList.toggle("active", link.dataset.routeLink === next),
   );
 
-  if (
-    pushHash &&
-    location.hash !==
-      `#${next}`
-  ) {
-    history.pushState(
-      null,
-      "",
-      `#${next}`
-    );
+  if (pushHash && location.hash !== `#${next}`) {
+    history.pushState(null, "", `#${next}`);
   }
 
-  $("#mainNav")
-    .classList
-    .remove("open");
+  $("#mainNav").classList.remove("open");
 
-  $("#mobileNavButton")
-    .setAttribute(
-      "aria-expanded",
-      "false"
-    );
+  $("#mobileNavButton").setAttribute("aria-expanded", "false");
 
-  $("#globalSearchPanel")
-    .classList
-    .remove("open");
+  $("#globalSearchPanel").classList.remove("open");
 
   window.scrollTo({
     top: 0,
-    behavior: "smooth"
+    behavior: "smooth",
   });
 
   if (next === "shop") {
@@ -3131,18 +2480,10 @@ function setRoute(
 }
 
 function routeFromHash() {
-  setRoute(
-    location.hash.replace(
-      "#",
-      ""
-    ) || "home",
-    false
-  );
+  setRoute(location.hash.replace("#", "") || "home", false);
 }
 
-function shopWith(
-  overrides = {}
-) {
+function shopWith(overrides = {}) {
   state.quickFilter = "all";
   state.room = "all";
   state.collection = "all";
@@ -3151,10 +2492,7 @@ function shopWith(
   state.condition = "all";
   state.search = "";
 
-  Object.assign(
-    state,
-    overrides
-  );
+  Object.assign(state, overrides);
 
   setRoute("shop");
   syncFilterUI();
@@ -3162,602 +2500,342 @@ function shopWith(
 }
 
 function syncFilterUI() {
-  $$(".filter-chip").forEach(
-    chip =>
-      chip.classList.toggle(
-        "active",
-        chip.dataset.filter ===
-          state.quickFilter
-      )
+  $$(".filter-chip").forEach((chip) =>
+    chip.classList.toggle("active", chip.dataset.filter === state.quickFilter),
   );
 
-  $("#roomFilter").value =
-    state.room;
+  $("#roomFilter").value = state.room;
 
-  $("#collectionFilter").value =
-    state.collection;
+  $("#collectionFilter").value = state.collection;
 
-  $("#categoryFilter").value =
-    state.category;
+  $("#categoryFilter").value = state.category;
 
-  $("#finishFilter").value =
-    state.finish;
+  $("#finishFilter").value = state.finish;
 
-  $("#conditionFilter").value =
-    state.condition;
+  $("#conditionFilter").value = state.condition;
 
-  $("#catalogSearch").value =
-    state.search;
+  $("#catalogSearch").value = state.search;
 }
 
-function bindCollectionButtons(
-  root = document
-) {
-  $$(
-    "[data-collection-button]",
-    root
-  ).forEach(
-    button =>
-      button.addEventListener(
-        "click",
-        () => {
-          const wanted =
-            button.dataset.collectionButton;
+function bindCollectionButtons(root = document) {
+  $$("[data-collection-button]", root).forEach((button) =>
+    button.addEventListener("click", () => {
+      const wanted = button.dataset.collectionButton;
 
-          const exact =
-            unique(
-              PRODUCTS.map(
-                product =>
-                  product.collection
-              )
-            ).find(
-              name =>
-                name === wanted ||
-                name
-                  .toLowerCase()
-                  .includes(
-                    wanted.toLowerCase()
-                  )
-            );
+      const exact = unique(PRODUCTS.map((product) => product.collection)).find(
+        (name) =>
+          name === wanted || name.toLowerCase().includes(wanted.toLowerCase()),
+      );
 
-          shopWith({
-            collection:
-              exact || wanted
-          });
-        }
-      )
+      shopWith({
+        collection: exact || wanted,
+      });
+    }),
   );
 }
 
 function bindStaticNavigation() {
-  $$(
-    "[data-route-link]"
-  ).forEach(
-    link =>
-      link.addEventListener(
-        "click",
-        event => {
-          event.preventDefault();
+  $$("[data-route-link]").forEach((link) =>
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
 
-          setRoute(
-            link.dataset.routeLink
-          );
-        }
-      )
+      setRoute(link.dataset.routeLink);
+    }),
   );
 
-  bindCollectionButtons(
-    document
+  bindCollectionButtons(document);
+
+  $$("[data-room-button]").forEach((button) =>
+    button.addEventListener("click", () => {
+      if (button.dataset.roomButton === "Conference") {
+        shopWith({
+          quickFilter: "Conference",
+        });
+      } else {
+        shopWith({
+          quickFilter: "Office",
+        });
+      }
+    }),
   );
 
-  $$(
-    "[data-room-button]"
-  ).forEach(
-    button =>
-      button.addEventListener(
-        "click",
-        () => {
-          if (
-            button.dataset.roomButton ===
-            "Conference"
-          ) {
-            shopWith({
-              quickFilter:
-                "Conference"
-            });
-          } else {
-            shopWith({
-              quickFilter:
-                "Office"
-            });
-          }
-        }
-      )
+  $$("[data-category-button]").forEach((button) =>
+    button.addEventListener("click", () => {
+      if (button.dataset.categoryButton === "Storage") {
+        shopWith({
+          quickFilter: "Storage",
+        });
+      } else {
+        shopWith({
+          category: button.dataset.categoryButton,
+        });
+      }
+    }),
   );
 
-  $$(
-    "[data-category-button]"
-  ).forEach(
-    button =>
-      button.addEventListener(
-        "click",
-        () => {
-          if (
-            button.dataset.categoryButton ===
-            "Storage"
-          ) {
-            shopWith({
-              quickFilter:
-                "Storage"
-            });
-          } else {
-            shopWith({
-              category:
-                button.dataset.categoryButton
-            });
-          }
-        }
-      )
+  $$("[data-condition-button]").forEach((button) =>
+    button.addEventListener("click", () =>
+      shopWith({
+        quickFilter: "Used",
+        condition: "Used",
+      }),
+    ),
   );
 
-  $$(
-    "[data-condition-button]"
-  ).forEach(
-    button =>
-      button.addEventListener(
-        "click",
-        () =>
-          shopWith({
-            quickFilter:
-              "Used",
-            condition:
-              "Used"
-          })
-      )
-  );
+  $$("[data-used-type]").forEach((button) =>
+    button.addEventListener("click", () => {
+      const type = button.dataset.usedType;
 
-  $$(
-    "[data-used-type]"
-  ).forEach(
-    button =>
-      button.addEventListener(
-        "click",
-        () => {
-          const type =
-            button.dataset.usedType;
+      shopWith({
+        quickFilter: "Used",
 
-          shopWith({
-            quickFilter:
-              "Used",
+        condition: "Used",
 
-            condition:
-              "Used",
+        category: type === "Chair" ? "Chair" : "all",
 
-            category:
-              type === "Chair"
-                ? "Chair"
-                : "all",
-
-            search:
-              type === "Storage"
-                ? "file"
-                : type === "Table"
-                  ? "table"
-                  : type === "Desk"
-                    ? "desk"
-                    : ""
-          });
-        }
-      )
+        search:
+          type === "Storage"
+            ? "file"
+            : type === "Table"
+              ? "table"
+              : type === "Desk"
+                ? "desk"
+                : "",
+      });
+    }),
   );
 }
 
 function bindCatalogControls() {
-  $$(".filter-chip").forEach(
-    button =>
-      button.addEventListener(
-        "click",
-        () => {
-          state.quickFilter =
-            button.dataset.filter;
+  $$(".filter-chip").forEach((button) =>
+    button.addEventListener("click", () => {
+      state.quickFilter = button.dataset.filter;
 
-          state.room =
-            "all";
+      state.room = "all";
 
-          state.collection =
-            "all";
+      state.collection = "all";
 
-          state.category =
-            "all";
+      state.category = "all";
 
-          state.finish =
-            "all";
+      state.finish = "all";
 
-          state.condition =
-            state.quickFilter ===
-              "Used"
-              ? "Used"
-              : "all";
+      state.condition = state.quickFilter === "Used" ? "Used" : "all";
 
-          state.conferenceShape =
-            "all";
+      state.conferenceShape = "all";
 
-          state.conferenceSize =
-            "all";
+      state.conferenceSize = "all";
 
-          state.conferenceFinish =
-            "all";
+      state.conferenceFinish = "all";
 
-          state.search =
-            "";
+      state.search = "";
 
-          $("#catalogSearch").value =
-            "";
+      $("#catalogSearch").value = "";
 
-          syncFilterUI();
-          renderCatalog();
-        }
-      )
+      syncFilterUI();
+      renderCatalog();
+    }),
   );
 
-  $("#roomFilter")
-    .addEventListener(
-      "change",
-      event => {
-        state.room =
-          event.target.value;
+  $("#roomFilter").addEventListener("change", (event) => {
+    state.room = event.target.value;
 
-        renderCatalog();
-      }
-    );
+    renderCatalog();
+  });
 
-  $("#collectionFilter")
-    .addEventListener(
-      "change",
-      event => {
-        state.collection =
-          event.target.value;
+  $("#collectionFilter").addEventListener("change", (event) => {
+    state.collection = event.target.value;
 
-        renderCatalog();
-      }
-    );
+    renderCatalog();
+  });
 
-  $("#categoryFilter")
-    .addEventListener(
-      "change",
-      event => {
-        state.category =
-          event.target.value;
+  $("#categoryFilter").addEventListener("change", (event) => {
+    state.category = event.target.value;
 
-        renderCatalog();
-      }
-    );
+    renderCatalog();
+  });
 
-  $("#finishFilter")
-    .addEventListener(
-      "change",
-      event => {
-        state.finish =
-          event.target.value;
+  $("#finishFilter").addEventListener("change", (event) => {
+    state.finish = event.target.value;
 
-        renderCatalog();
-      }
-    );
+    renderCatalog();
+  });
 
-  $("#conditionFilter")
-    .addEventListener(
-      "change",
-      event => {
-        state.condition =
-          event.target.value;
+  $("#conditionFilter").addEventListener("change", (event) => {
+    state.condition = event.target.value;
 
-        renderCatalog();
-      }
-    );
+    renderCatalog();
+  });
 
-  $("#catalogSort")
-    .addEventListener(
-      "change",
-      event => {
-        state.sort =
-          event.target.value;
+  $("#catalogSort").addEventListener("change", (event) => {
+    state.sort = event.target.value;
 
-        renderCatalog();
-      }
-    );
+    renderCatalog();
+  });
 
-  $("#catalogSearch")
-    .addEventListener(
-      "input",
-      event => {
-        state.search =
-          event.target.value.trim();
+  $("#catalogSearch").addEventListener("input", (event) => {
+    state.search = event.target.value.trim();
 
-        renderCatalog();
-      }
-    );
+    renderCatalog();
+  });
 
-  $("#resetCatalog")
-    .addEventListener(
-      "click",
-      resetCatalogFilters
-    );
+  $("#resetCatalog").addEventListener("click", resetCatalogFilters);
 
-  $("#loadMoreProducts")
-    .addEventListener(
-      "click",
-      () => {
-        state.catalogLimit +=
-          48;
+  $("#loadMoreProducts").addEventListener("click", () => {
+    state.catalogLimit += 48;
 
-        renderCatalog();
-      }
-    );
+    renderCatalog();
+  });
 }
 
 function bindHeaderAndPanels() {
-  $("#mobileNavButton")
-    .addEventListener(
-      "click",
-      () => {
-        const open =
-          $("#mainNav")
-            .classList
-            .toggle("open");
+  $("#mobileNavButton").addEventListener("click", () => {
+    const open = $("#mainNav").classList.toggle("open");
 
-        $("#mobileNavButton")
-          .setAttribute(
-            "aria-expanded",
-            String(open)
-          );
-      }
-    );
+    $("#mobileNavButton").setAttribute("aria-expanded", String(open));
+  });
 
-  $("#searchButton")
-    .addEventListener(
-      "click",
-      () => {
-        $("#globalSearchPanel")
-          .classList
-          .toggle("open");
+  $("#searchButton").addEventListener("click", () => {
+    $("#globalSearchPanel").classList.toggle("open");
 
-        setTimeout(
-          () =>
-            $("#globalSearchInput")
-              .focus(),
-          50
-        );
-      }
-    );
+    setTimeout(() => $("#globalSearchInput").focus(), 50);
+  });
 
-  const submitGlobalSearch =
-    () => {
-      const value =
-        $("#globalSearchInput")
-          .value
-          .trim();
+  const submitGlobalSearch = () => {
+    const value = $("#globalSearchInput").value.trim();
 
-      shopWith({
-        search: value
-      });
-    };
+    shopWith({
+      search: value,
+    });
+  };
 
-  $("#globalSearchSubmit")
-    .addEventListener(
-      "click",
-      submitGlobalSearch
-    );
+  $("#globalSearchSubmit").addEventListener("click", submitGlobalSearch);
 
-  $("#globalSearchInput")
-    .addEventListener(
-      "keydown",
-      event => {
-        if (
-          event.key ===
-          "Enter"
-        ) {
-          submitGlobalSearch();
-        }
-      }
-    );
-
-  $("#cartButton")
-    .addEventListener(
-      "click",
-      openCart
-    );
-
-  $$(
-    "[data-close-cart]"
-  ).forEach(
-    element =>
-      element.addEventListener(
-        "click",
-        closeCart
-      )
-  );
-
-  $$(
-    "[data-close-product]"
-  ).forEach(
-    element =>
-      element.addEventListener(
-        "click",
-        closeProduct
-      )
-  );
-
-  $("#modalAddToCart")
-    .addEventListener(
-      "click",
-      () => {
-        if (
-          !state.currentProduct
-        ) {
-          return;
-        }
-
-        const mode =
-          $("#modalAddToCart")
-            .dataset
-            .mode;
-
-        if (mode === "call") {
-          window.location.href =
-            `tel:${PHONE}`;
-
-          return;
-        }
-
-        if (
-          mode === "disabled"
-        ) {
-          return;
-        }
-
-        addToCart(
-          state.currentProduct
-        );
-      }
-    );
-
-  $("#checkoutButton")
-    .addEventListener(
-      "click",
-      () =>
-        toast(
-          "Shopify checkout will be connected during production integration."
-        )
-    );
-
-  $("#contactForm")
-    .addEventListener(
-      "submit",
-      event => {
-        event.preventDefault();
-
-        $("#contactFormNote")
-          .textContent =
-          "Thanks! This preview form is working locally. The final launch will connect it to the client's live contact endpoint.";
-
-        toast(
-          "Inquiry captured in the preview"
-        );
-      }
-    );
-
-  document.addEventListener(
-    "keydown",
-    event => {
-      if (
-        event.key ===
-        "Escape"
-      ) {
-        closeProduct();
-        closeCart();
-
-        $("#globalSearchPanel")
-          .classList
-          .remove("open");
-      }
+  $("#globalSearchInput").addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      submitGlobalSearch();
     }
+  });
+
+  $("#cartButton").addEventListener("click", openCart);
+
+  $$("[data-close-cart]").forEach((element) =>
+    element.addEventListener("click", closeCart),
   );
+
+  $$("[data-close-product]").forEach((element) =>
+    element.addEventListener("click", closeProduct),
+  );
+
+  $("#modalAddToCart").addEventListener("click", () => {
+    if (!state.currentProduct) {
+      return;
+    }
+
+    const mode = $("#modalAddToCart").dataset.mode;
+
+    if (mode === "call") {
+      window.location.href = `tel:${PHONE}`;
+
+      return;
+    }
+
+    if (mode === "disabled") {
+      return;
+    }
+
+    addToCart(state.currentProduct);
+  });
+
+  $("#checkoutButton").addEventListener("click", () =>
+    toast("Shopify checkout will be connected during production integration."),
+  );
+
+  $("#contactForm").addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    $("#contactFormNote").textContent =
+      "Thanks! This preview form is working locally. The final launch will connect it to the client's live contact endpoint.";
+
+    toast("Inquiry captured in the preview");
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeProduct();
+      closeCart();
+
+      $("#globalSearchPanel").classList.remove("open");
+    }
+  });
 
   document.addEventListener(
     "error",
-    event => {
-      const target =
-        event.target;
+    (event) => {
+      const target = event.target;
 
-      if (
-        !(
-          target instanceof
-          HTMLImageElement
-        )
-      ) {
+      if (!(target instanceof HTMLImageElement)) {
         return;
       }
 
       if (
         !target.closest(
-          ".product-card, .conference-mini-card, .collection-cluster-card"
+          ".product-card, .conference-mini-card, .collection-cluster-card",
         )
       ) {
         return;
       }
 
-      target.style.display =
-        "none";
+      target.style.display = "none";
 
-      target.setAttribute(
-        "aria-hidden",
-        "true"
-      );
+      target.setAttribute("aria-hidden", "true");
 
-      target
-        .parentElement
-        ?.classList
-        .add(
-          "image-missing"
-        );
+      target.parentElement?.classList.add("image-missing");
     },
-    true
+    true,
   );
 }
 
 function bindBundleButton() {
-  $("#addAshBundle")
-    .addEventListener(
-      "click",
-      () => {
-        const ash =
-          PRODUCTS
-            .filter(
-              product =>
-                product.collection ===
-                  "Ash Gray" &&
-                product.available !==
-                  false &&
-                !product.quoteRequired
-            )
-            .sort(
-              (a, b) =>
-                featuredScore(b) -
-                featuredScore(a)
-            )
-            .slice(0, 3);
+  $("#addAshBundle").addEventListener("click", () => {
+    const ash = PRODUCTS.filter(
+      (product) =>
+        product.collection === "Ash Gray" &&
+        product.available !== false &&
+        !product.quoteRequired,
+    )
+      .sort((a, b) => featuredScore(b) - featuredScore(a))
+      .slice(0, 3);
 
-        const products =
-          ash.length
-            ? ash
-            : FALLBACK_PRODUCTS.filter(
-                product =>
-                  product.collection ===
-                  "Ash Gray"
-              );
+    const products =
+      state.catalogSource === "fallback"
+        ? FALLBACK_PRODUCTS.filter(
+            (product) =>
+              product.collection === "Ash Gray" &&
+              product.available !== false &&
+              !product.quoteRequired,
+          )
+        : ash;
 
-        products.forEach(
-          addToCart
-        );
+    if (!products.length) {
+      toast("No Ash Gray bundle pieces are currently available");
+      return;
+    }
 
-        openCart();
-      }
-    );
+    products.forEach(addToCart);
+
+    openCart();
+  });
 }
 
 function initialize() {
-  $("#year").textContent =
-    new Date().getFullYear();
+  $("#year").textContent = new Date().getFullYear();
 
   bindStaticNavigation();
   bindCatalogControls();
   bindHeaderAndPanels();
   bindBundleButton();
 
-  window.addEventListener(
-    "hashchange",
-    routeFromHash
-  );
+  window.addEventListener("hashchange", routeFromHash);
 
   routeFromHash();
   renderCart();

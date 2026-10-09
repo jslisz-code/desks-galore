@@ -1,5 +1,5 @@
 /* =========================================================
-   DESKS GALORE — FULL FIRST-DRAFT REBUILD
+   DESKS GALORE — V7 GALLERY + RECOMMENDATIONS
    Brand family: charcoal / white / Desks Galore red / warm yellow
    ========================================================= */
 
@@ -3205,5 +3205,343 @@ textarea:focus-visible {
     animation-iteration-count: 1 !important;
     transition-duration: .01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* =========================================================
+   V7 PRODUCT GALLERY + RECOMMENDATIONS + IMAGE FALLBACKS
+   ========================================================= */
+
+.product-image-placeholder {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 34px 22px;
+  background: linear-gradient(145deg, var(--cream), var(--paper));
+  color: var(--ink);
+}
+
+.product-image-placeholder__mark {
+  width: 58px;
+  height: 58px;
+  margin-bottom: 14px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--ink);
+  color: white;
+  box-shadow: inset 0 -4px 0 var(--brand-red);
+  font-family: "Libre Franklin", sans-serif;
+  font-size: .8rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+}
+
+.product-image-placeholder strong,
+.product-image-placeholder span,
+.product-image-placeholder small {
+  display: block;
+}
+
+.product-image-placeholder strong {
+  font-size: .96rem;
+  margin-bottom: 4px;
+}
+
+.product-image-placeholder span {
+  color: var(--muted);
+  font-size: .74rem;
+}
+
+.product-image-placeholder small {
+  margin-top: 7px;
+  color: var(--brand-red);
+  font-size: .72rem;
+  font-weight: 800;
+}
+
+.product-card-media > .product-image-placeholder,
+.pair-card-image > .product-image-placeholder {
+  height: 100%;
+}
+
+.product-modal-dialog {
+  width: min(1240px, calc(100% - 34px));
+  grid-template-columns: .95fr 1.05fr;
+}
+
+.product-modal-image {
+  min-height: 0;
+  padding: 24px;
+  background: #f1eee8;
+  align-self: stretch;
+}
+
+.product-modal-image > .product-image-placeholder {
+  min-height: 560px;
+  border-radius: var(--radius-sm);
+}
+
+.product-gallery-main {
+  height: 560px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: white;
+  border: 1px solid var(--line);
+}
+
+.product-gallery-main > img {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: contain;
+  padding: 20px;
+}
+
+.product-gallery-main > .product-image-placeholder {
+  min-height: 100%;
+}
+
+.product-gallery-thumbnails {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.product-gallery-thumb {
+  height: 88px;
+  padding: 5px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: white;
+}
+
+.product-gallery-thumb:hover,
+.product-gallery-thumb.active {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 2px var(--brand-yellow);
+}
+
+.product-gallery-thumb img {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  object-fit: contain;
+}
+
+.product-modal-dialog > .pairs-panel {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 30px 34px 38px;
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.product-modal-dialog > .pairs-panel h3 {
+  margin-bottom: 18px;
+  font-size: 1.25rem;
+}
+
+.recommendation-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.pair-card {
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: white;
+  color: var(--ink);
+  text-align: left;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.pair-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(22,22,22,.24);
+  box-shadow: var(--shadow-sm);
+}
+
+.pair-card-image {
+  height: 180px;
+  display: block;
+  overflow: hidden;
+  background: #f3f0e9;
+}
+
+.pair-card-image > img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 10px;
+}
+
+.pair-card-body {
+  display: block;
+  padding: 13px 14px 15px;
+}
+
+.pair-card-body small,
+.pair-card-body strong,
+.pair-card-body b {
+  display: block;
+}
+
+.pair-card-body small {
+  color: var(--muted);
+  font-size: .62rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.pair-card-body strong {
+  margin-top: 5px;
+  min-height: 2.4em;
+  font-size: .82rem;
+  line-height: 1.2;
+}
+
+.pair-card-body b {
+  margin-top: 9px;
+  color: var(--brand-red);
+  font-size: .82rem;
+}
+
+.pair-empty {
+  color: var(--muted);
+  font-size: .78rem;
+}
+
+.cart-tax-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 0 0 13px;
+  color: var(--muted);
+  font-size: .72rem;
+}
+
+.cart-tax-row strong {
+  max-width: 220px;
+  color: var(--ink);
+  text-align: right;
+  font-size: .7rem;
+}
+
+@media (max-width: 900px) {
+  .product-modal-dialog {
+    grid-template-columns: 1fr;
+  }
+
+  .product-gallery-main {
+    height: 460px;
+  }
+
+  .product-modal-dialog > .pairs-panel {
+    grid-column: auto;
+  }
+
+  .recommendation-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .product-modal-image {
+    padding: 14px;
+  }
+
+  .product-gallery-main {
+    height: 330px;
+  }
+
+  .product-gallery-thumbnails {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .product-gallery-thumb {
+    height: 72px;
+  }
+
+  .product-modal-dialog > .pairs-panel {
+    padding: 24px 18px 30px;
+  }
+
+  .recommendation-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pair-card {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+  }
+
+  .pair-card-image {
+    height: 100%;
+    min-height: 120px;
+  }
+}
+
+/* =========================================================
+   JORDAN SLISZ SIGNATURE FOOTER
+   ========================================================= */
+
+.designer-signature {
+  padding: 30px 20px 34px;
+  text-align: center;
+  background: var(--ink);
+  border-top: 1px solid rgba(242, 202, 43, 0.16);
+}
+
+.designer-signature-logo {
+  width: 42px;
+  height: auto;
+  margin: 0 auto 12px;
+  object-fit: contain;
+  filter:
+    brightness(0)
+    saturate(100%)
+    invert(82%)
+    sepia(80%)
+    saturate(700%)
+    hue-rotate(2deg)
+    brightness(100%);
+}
+
+.designer-signature p {
+  margin: 0;
+  color: rgba(242, 202, 43, 0.58);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+@media (max-width: 600px) {
+  .designer-signature {
+    padding: 26px 18px 30px;
+  }
+
+  .designer-signature-logo {
+    width: 38px;
+  }
+
+  .designer-signature p {
+    font-size: 0.58rem;
+    letter-spacing: 0.13em;
   }
 }
